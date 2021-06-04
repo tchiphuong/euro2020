@@ -10,11 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.2.1",
-    "tailwind-scrollbar-hide": "^1.0.3"
+    "tailwind-scrollbar-hide": "^1.0.3",
+    "videojs-contrib-hls": "^5.15.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
     "postcss": "^8.3.0",
-    "tailwindcss": "^2.1.2"
+    "tailwindcss": "^2.1.2",
+    "video.js": "^7.12.3"
   }
 }
