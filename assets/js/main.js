@@ -20,7 +20,7 @@ $("document").ready(function () {
                     date = "";
                 } else {
                     date =
-                        `<div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12">
+                        `<div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                                     <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl">
                                         <div class="p-3 font-bold uppercase">` +
                         moment(response[i]["kickOffTime"]["dateTime"]).format(
@@ -40,7 +40,7 @@ $("document").ready(function () {
                 }
             } else {
                 date =
-                    `<div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12">
+                    `<div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                                     <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl">
                                         <div class="p-3 font-bold uppercase">` +
                     moment(response[i]["kickOffTime"]["dateTime"]).format(
@@ -118,7 +118,7 @@ $("document").ready(function () {
     }).done(function (response) {
         for (let i = 0; i < Object.keys(response).length; i -= -1) {
             $("#groupData").append(
-                `<div class="w-full px-2 md:w-6/12 lg:w-4/12"><div class="flex flex-col w-full p-3 my-2 bg-white shadow-md cursor-pointer rounded-xl"><div class="font-bold uppercase">` +
+                `<div data-aos="fade-up" data-aos-duration="2000" class="w-full px-2 md:w-6/12 lg:w-4/12"><div class="flex flex-col w-full p-3 my-2 bg-white shadow-md cursor-pointer rounded-xl"><div class="font-bold uppercase">` +
                     response[i]["group"]["metaData"]["groupName"] +
                     `</div><table id="group` +
                     response[i]["group"]["id"] +
