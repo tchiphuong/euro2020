@@ -1,7 +1,7 @@
 $("document").ready(function () {
     //match
     $.ajax({
-        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=100&competitionId=3&fromDate=2012-06-11&toDate=2016-07-11",
+        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=10&competitionId=3&fromDate=2012-06-11",
         url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
         dataType: "json",
         type: "GET",
