@@ -19,7 +19,7 @@ $("document").ready(function () {
                 {
                     date = 
                     `
-                        <div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
                                 <div class="p-3 font-bold uppercase">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
@@ -32,7 +32,7 @@ $("document").ready(function () {
             {
                 date = 
                     `
-                        <div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12 xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
                                 <div class="p-3 font-bold uppercase">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
@@ -87,7 +87,7 @@ $("document").ready(function () {
         for (let i = 0; i < Object.keys(response).length; i -= -1) {
             $("#groupData").append(
                 `
-                    <div data-aos="fade-up" data-aos-duration="2000" class="w-full px-2 md:w-6/12 lg:w-4/12">
+                    <div data-aos="fade-up" data-aos-duration="2000" class="w-full px-2 md:w-6/12 xl:w-4/12">
                         <div class="flex flex-col w-full p-3 my-2 bg-white shadow-md cursor-pointer rounded-xl">
                             <div class="font-bold uppercase">` + response[i]["group"]["metaData"]["groupName"] + `</div>
                             <table id="group` + response[i]["group"]["id"] + `">
@@ -132,7 +132,7 @@ $("document").ready(function () {
         {
             $("#teamData").append(
                         `
-                        <div x-data="{ list: false}" class="relative w-full p-2 md:w-4/12 lg:w-3/12">
+                        <div x-data="{ list: false}" class="relative w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12">
                             <div data-aos="fade-up" data-aos-duration="1000" @click="list = true" class="flex py-3 bg-white shadow-md rounded-xl hover:opacity-80">
                                 <div class="flex items-center justify-center h-24 w-28">
                                     <img class="w-20 h-20" src="` + logo + `" alt="` + name + `">
@@ -140,11 +140,6 @@ $("document").ready(function () {
                                 <div class="flex flex-col">
                                     <div class="px-2 font-bold line-clamp-1">` + name + `</div>
                                     <ul class="flex flex-wrap flex-grow m-1" id="team` + id + `">
-                                        <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-7 w-7">W</li>
-                                        <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-7 w-7">W</li>
-                                        <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-7 w-7">W</li>
-                                        <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-7 w-7">W</li>
-                                        <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-7 w-7">W</li>
                                     </ul>
                                 </div>
                             </div>
@@ -156,6 +151,7 @@ $("document").ready(function () {
                         </div>
                         `
                     );
+                    numberOfMatches(5,id);
         }
 
 
@@ -268,4 +264,61 @@ $("document").ready(function () {
             });
             
         }
+
+        //numberOfMatches
+        function numberOfMatches(limit,teamIds)
+        {
+            $('#team' + teamIds).empty();
+            $.ajax({
+                url: 'https://data-card.uefa.com/v1/form-guide?numberOfMatches=' + limit + '&teamIds=' + teamIds,
+                dataType: 'json',
+                type: 'GET',
+            }).done(function(response) {
+
+                // console.log(Object.keys(response["data"][0]["formguide"]).length);
+
+                // console.log(response["data"][0]["team"]["id"] + ": " + response["data"][0]["formguide"][2]["outcome"]);
+                for (let i = 5; i > 0 ; i--)
+                {
+                    // console.log(i-1);
+                    // console.log(response["data"][0]["team"]["id"] + ": " + response["data"][0]["formguide"][i-1]["outcome"]);
+                    switch (response["data"][0]["formguide"][i-1]["outcome"]) {
+                        case 'WIN':
+                            $('#team' + response["data"][0]["team"]["id"]).append(
+                                `
+                                    <li class="flex items-center justify-center m-1 text-xs text-white bg-green-500 rounded-full h-8 w-8 lg:h-9 lg:w-9">` + response["data"][0]["formguide"][i-1]["outcome"].substring(0, 1) + `</li>
+                                `
+                            );
+                          break;
+                        case 'DRAW':
+                            $('#team' + response["data"][0]["team"]["id"]).append(
+                                `
+                                    <li class="flex items-center justify-center m-1 text-xs text-white bg-gray-500 rounded-full h-8 w-8 lg:h-9 lg:w-9">` + response["data"][0]["formguide"][i-1]["outcome"].substring(0, 1) + `</li>
+                                `
+                            );
+                          break;
+                        default:
+                            $('#team' + response["data"][0]["team"]["id"]).append(
+                                `
+                                    <li class="flex items-center justify-center m-1 text-xs text-white bg-red-500 rounded-full h-8 w-8 lg:h-9 lg:w-9">` + response["data"][0]["formguide"][i-1]["outcome"].substring(0, 1) + `</li>
+                                `
+                            );
+                      }
+                    
+                }
+            });
+            
+        }
 });
+
+
+// team https://comp.uefa.com/v1/teams/135,57166
+// league https://comp.uefa.com/v1/competitions/3
+// line up https://match.uefa.com/v3/matches/2029498/lineups
+// match https://data-card.uefa.com/v1/form-guide?matchId=2024448&numberOfMatches=5
+// all team https://comp.uefa.com/v1/competitions/3/teams
+// eu20 https://comp.uefa.com/v2/teams?competitionId=3&seasonYear=2020&limit=100&offset=0
+
+// group https://standings.uefa.com/v1/standings?competitionId=3&seasonYear=2020
+
+// live https://broadcaster.uefa.com/v1/broadcasters?offset=0&limit=100&countryCode=VN
