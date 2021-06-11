@@ -9,6 +9,7 @@ $("document").ready(function () {
         var date = "";
         var type = "";
         var score = "";
+        var minute = "";
         for (let i = 0; i < Object.keys(response).length; i -= -1) {
             if (i > 0) {
                 if (moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") === moment(response[i - 1]["kickOffTime"]["dateTime"]).format("DDMMYYYY"))
@@ -42,6 +43,13 @@ $("document").ready(function () {
             }
 
             $("#matchData").append(date);
+            if(response[i]["minute"])
+            {
+                minute = `<span>` + response[i]["minute"]["normal"] + `'</span>`;
+            }
+            else{
+                minute = "";
+            }
             if (response[i]["group"]) {
                 type = `<div class="font-bold text-center">` + response[i]["group"]["metaData"]["groupName"] + `</div>`;
             } else {
@@ -62,7 +70,7 @@ $("document").ready(function () {
                                 <div>
                                     <img class="w-6 h-6" src="` + response[i]["homeTeam"]["logoUrl"] + `" alt="` + response[i]["homeTeam"]["internationalName"] + `">
                                 </div>
-                                <div class="w-3/12 text-center">` + score + `</div>
+                                <div class="w-3/12 text-center flex flex-col"><span>` + score + `</span>` + minute + `</div>
                                 <div>
                                     <img class="w-6 h-6" src="` + response[i]["awayTeam"]["logoUrl"] + `" alt="` + response[i]["awayTeam"]["internationalName"] + `">
                                 </div>
@@ -72,9 +80,9 @@ $("document").ready(function () {
                     </div>
                     `
             );
-            if (response[i]["score"]) {
+            // if (response[i]["score"]) {
                 lineup(response[i]["id"]);
-            }
+            // }
         }
     });
 
@@ -181,86 +189,90 @@ $("document").ready(function () {
         // lineup
         function lineup(matchId)
         {
-            $("." + matchId).append(
-                `
-                    <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 top-20 rounded-xl">    
-                        <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
-                        <div class="flex justify-between bg-white">
-                            <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                            </ul>
-                            <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                            </ul>
-                        </div>
-                        <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
-                        <div class="flex justify-between bg-white">
-                            <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                            </ul>
-                            <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                            </ul>
-                        </div>
-                    </div>
-                `
-            );
-
-
         $.ajax({
             url: 'https://match.uefa.com/v3/matches/'+ matchId +'/lineups',
             dataType: 'json',
             type: 'GET',
             }).done(function(response) {
-                for (let i = 0; i < Object.keys(response["homeTeam"]["field"]).length; i -= -1)
+                if(response["lineupStatus"] == "NOT_AVAILABLE")
                 {
-                    $("#lineUpHomeTeam" + response["matchId"]).append(
+                    return
+                }
+                else
+                {
+                    $("." + matchId).append(
                         `
-                        <li class="flex items-center justify-start w-full p-1 border-t hover:bg-gray-50">
-                            <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
-                            <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                            <span class="p-1 line-clamp-1">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                        </li>
+                            <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 top-20 rounded-xl">    
+                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
+                                <div class="flex justify-between bg-white">
+                                    <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
+                                    </ul>
+                                    <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
+                                    </ul>
+                                </div>
+                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
+                                <div class="flex justify-between bg-white">
+                                    <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
+                                    </ul>
+                                    <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
+                                    </ul>
+                                </div>
+                            </div>
                         `
                     );
-                }
 
-                for (let i = 0; i < Object.keys(response["homeTeam"]["bench"]).length; i -= -1)
-                {
-                    $("#subHomeTeam" + response["matchId"]).append(
-                        `
-                        <li class="flex items-center justify-start w-full p-1 border-t hover:bg-gray-50">
-                            <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
-                            <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                            <span class="p-1 line-clamp-1">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                        </li>
-                        `
-                    );
-                }
-                
-                for (let i = 0; i < Object.keys(response["awayTeam"]["field"]).length; i -= -1)
-                {
-                    $("#lineUpAwayTeam" + response["matchId"]).append(
-                        `
-                        <li class="flex items-center justify-end w-full p-1 border-t hover:bg-gray-50">
-                            <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                            <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                            <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
-                        </li>
-                        `
-                    );
-                }
-                
-                for (let i = 0; i < Object.keys(response["awayTeam"]["bench"]).length; i -= -1)
-                {
-                    $("#subAwayTeam" + response["matchId"]).append(
-                        `
-                        <li class="flex items-center justify-end w-full p-1 border-t hover:bg-gray-50">
-                            <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                            <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                            <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
-                        </li>
-                        `
-                    );
-                }
-                
+                    for (let i = 0; i < Object.keys(response["homeTeam"]["field"]).length; i -= -1)
+                    {
+                        $("#lineUpHomeTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-start w-full p-1 border-t hover:bg-gray-50">
+                                <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span class="p-1 line-clamp-1">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                            </li>
+                            `
+                        );
+                    }
 
+                    for (let i = 0; i < Object.keys(response["homeTeam"]["bench"]).length; i -= -1)
+                    {
+                        $("#subHomeTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-start w-full p-1 border-t hover:bg-gray-50">
+                                <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span class="p-1 line-clamp-1">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                            </li>
+                            `
+                        );
+                    }
+                    
+                    for (let i = 0; i < Object.keys(response["awayTeam"]["field"]).length; i -= -1)
+                    {
+                        $("#lineUpAwayTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-end w-full p-1 border-t hover:bg-gray-50">
+                                <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
+                            </li>
+                            `
+                        );
+                    }
+                    
+                    for (let i = 0; i < Object.keys(response["awayTeam"]["bench"]).length; i -= -1)
+                    {
+                        $("#subAwayTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-end w-full p-1 border-t hover:bg-gray-50">
+                                <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
+                            </li>
+                            `
+                        );
+                    }
+                }
             });
             
         }
