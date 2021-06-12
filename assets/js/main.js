@@ -97,18 +97,21 @@ $(document).ready(function() {
                     <div data-aos="fade-up" data-aos-duration="2000" class="w-full px-2 md:w-6/12 xl:w-4/12">
                         <div class="flex flex-col w-full p-3 my-2 bg-white shadow-md cursor-pointer rounded-xl">
                             <div class="font-bold uppercase">` + response[i]["group"]["metaData"]["groupName"] + `</div>
-                            <table id="group` + response[i]["group"]["id"] + `">
+                            <table>
                                 <thead>
-                                    <th class="w-1/12 py-2"></th>
-                                    <th class="w-8 py-2"></th>
-                                    <th class="flex-grow py-2"></th>
-                                    <th class="w-1/12 py-2">P</th>
-                                    <th class="w-1/12 py-2">W</th>
-                                    <th class="w-1/12 py-2">D</th>
-                                    <th class="w-1/12 py-2">L</th>
-                                    <th class="w-1/12 py-2">+/-</th>
-                                    <th class="w-1/12 py-2">Pts</th>
+                                    <tr class="text-sm bg-white">
+                                        <th colspan="3"></th>
+                                        <th class="w-1/12 my-2 text-center">P</th>
+                                        <th class="w-1/12 my-2 text-center">W</th>
+                                        <th class="w-1/12 my-2 text-center">D</th>
+                                        <th class="w-1/12 my-2 text-center">L</th>
+                                        <th class="w-1/12 my-2 text-center">+/-</th>
+                                        <th class="w-1/12 my-2 text-center">Pts</th>
+                                    </tr>
                                 </thead>
+                                <tbody id="group` + response[i]["group"]["id"] + `">
+
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -118,16 +121,16 @@ $(document).ready(function() {
             {
                 $("#group" + response[i]["group"]["id"]).append(
                     `
-                    <tr class="bg-white border-t hover:opacity-80">
-                        <td class="p-1">` + response[i]["items"][j]["rank"] + `</td>
-                        <td class="py-2"><img class="w-6 h-6" src="` + response[i]["items"][j]["team"]["bigLogoUrl"] + `" alt="` + response[i]["items"][j]["team"]["internationalName"] + `"></td>
-                        <td class="py-1 my-1 capitalize truncate">` + response[i]["items"][j]["team"]["internationalName"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["played"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["won"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["drawn"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["lost"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["goalDifference"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["points"] + `</td>
+                    <tr class="text-sm md:text-base bg-white border-t hover:opacity-80">
+                        <td class="w-1/12 px-1 my-2 text-center">` + response[i]["items"][j]["rank"] + `</td>
+                        <td class="w-6"><img class="w-full" src="` + response[i]["items"][j]["team"]["bigLogoUrl"] + `" alt="` + response[i]["items"][j]["team"]["internationalName"] + `"></td>
+                        <td class="w-full p-1 my-2 capitalize line-clamp-1">` + response[i]["items"][j]["team"]["internationalName"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["played"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["won"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["drawn"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["lost"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["goalDifference"] + `</td>
+                        <td class="w-1/12 my-2 text-center">` + response[i]["items"][j]["points"] + `</td>
                     </tr>`
                 );
             }
