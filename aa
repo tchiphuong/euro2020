@@ -1,0 +1,400 @@
+var usersid = document.getElementById("usersid").value;
+var nameusss = document.getElementById("usname").value;
+var role = document.getElementById("role").value;
+var room_id = "";
+var imgUrl = "";
+var oldRoom = "";
+
+var tb = document.getElementById("msg");
+var submit = document.getElementById("submit");
+submit.disabled = true;
+tb.disabled = true;
+var enableTextarea = function () {
+    if (tb.value.trim().length == 0 || tb.value.trim().length == null) {
+        submit.disabled = true;
+    } else {
+        submit.disabled = false;
+    }
+};
+
+// load_messages
+function load_messages_limit(limit, start, room_id) {
+    $.ajax({
+        url: "load-msg",
+        type: "GET",
+        data: {
+            limit: limit,
+            start: start,
+            room_id: room_id,
+        },
+        success: function (data) {
+            $(".chat__main").empty();
+            for (var i = data.length - 1; i >= 0; i--) {
+                var getHours = new Date(data[i]["created_at"] +'GMT+7').getUTCHours();
+                var getMinutes = new Date(data[i]["created_at"]).getUTCMinutes();
+                var getSeconds = new Date(data[i]["created_at"]).getUTCSeconds();
+                var getDay = new Date(data[i]["created_at"]).getUTCDay();
+                // var m = [1,2,3,4,5,6,7,8,9,10,11,12];
+                var getMonth = new Date(data[i]["created_at"]).getUTCMonth();
+                var getFullYear = new Date(data[i]["created_at"]).getUTCFullYear();
+                var date = getHours + `:` + getMinutes + `:` + getSeconds + ` ` + getDay + `/` + getMonth + `/` + getFullYear;
+                console.log(date);
+                action = "inactive";
+                if (data[i]["user_id"] == usersid) {
+                    $(".chat__main").append(
+                        `<div class="mes me"><div class="mes__content" id=` +
+                        data[i]["user_id"] +
+                        `">` +
+                        data[i]["content"].replaceAll("\n", "<br>") +
+                        `<div style="font-size: .8em; margin-top: 3px; text-align: right">` + data[i]["created_at"] + `</div></div><img src="` +
+                        data[i]["image"] +
+                        `" class="avt" alt=""/></div>`
+                    );
+                } else {
+                    $(".chat__main").append(
+                        `<div class="mes guest"><img src="` +
+                        data[i]["image"] +
+                        `" class="avt" alt=""/><div class="mes__content" id=` +
+                        data[i]["user_id"] +
+                        `"><div class="mes__content--name">` +
+                        data[i]["name"] +
+                        `</div>` +
+                        data[i]["content"].replaceAll("\n", "<br>") +
+                        `<div style="font-size: .8em; margin-top: 3px; text-align: right">` + date + `</div></div></div>`
+                    );
+                }
+            }
+        },
+    });
+}
+
+function load_group() {
+    var rID = "";
+    var rName = "";
+    $.ajax({
+        url: "xem-nhom-tai-khoan/" + usersid,
+        type: "GET",
+        success: function (data) {
+            $(".lists__room").empty();
+            for (var i = 0; i < data.length; i++) {
+                $(".lists__room").append(`<a onclick="load_room_info(` + data[i]["room_id"] + `);" class="list--item" id="room_id">
+<!--                                            <img src="https://i.mydramalist.com/qwXkDf.jpg" class="avt" alt="..." />-->
+                                            <div class="item__info">
+                                            <div class="name">` + data[i]["room_name"].replace(nameusss, "") + `</div>` + `<div class="last-mess"></div>` + `</div></a>`);
+            }
+        },
+    });
+}
+
+$("document").ready(function () {
+    var mesStart = 0;
+    var messLimit = 1;
+    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
+    $('#messages').scroll(function () {
+        if ($('#messages').scrollTop() == 0) {
+            $('#messages').scrollTop(390);
+            load_messages_limit(messLimit, mesStart, room_id);
+            messLimit = messLimit + messLimit;
+            console.log(mesStart);
+        }
+    });
+
+    getImg(usersid);
+    load_group();
+    load_members();
+    $(".btn").click(function () {
+        $("#warning").html("");
+    });
+});
+
+$("#tool").delegate("#btn_addtv", "click", function () {
+// $("#btn_addtv").click(function () {
+    $.ajax({
+        url: "load-tv/" + room_id,
+        method: "GET",
+        success: function (res) {
+            $("#list-wrapper").empty();
+            for (var i = 0; i < res.length; i++) {
+                console.log(res[i]["user_name"]);
+
+                $("#list-wrapper").append(
+                    `<li class="list-group-item">
+                                    <input class="form-check-input membercheck" type="checkbox" value="item1" id="` +
+                    res[i]["user_id"] +
+                    `" />
+                                    <label class="form-check-label" for="item1">
+                                        ` +
+                    res[i]["user_name"] +
+                    `
+                                    </label>
+                                </li>`
+                );
+            }
+        },
+    });
+});
+
+$("#rooms").on("submit", function (e) {
+    e.preventDefault();
+    let roomName = $("input[name=roomName]").val();
+    if (roomName === "") {
+        $("#warning").text("Bạn chưa nhập tên phòng");
+    } else {
+        $.ajax({
+            url: "rooms",
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                // alert(data)
+                $("#createRooom").modal("hide");
+                $(".toast").toast("show");
+                $(".toast").html(
+                    '<div class="toast-header"> <i class="text-success rounded mr-2 fa fa-check"></i> <strong class="mr-auto">Thông báo</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true"><i class="fa fa-times"></i></span> </button> </div> <div class="toast-body">Phong ' +
+                    data[0]["name"] +
+                    " da duoc tao thanh cong!</div>"
+                );
+                $(".lists__room").empty();
+                load_group();
+            },
+        });
+    }
+});
+
+function load_members(room_id) {
+    $.ajax({
+        url: "load-members/" + room_id,
+        type: "get",
+        success: function (data) {
+            $("#load-members").empty();
+            for (var i = 0; i < data.length; i -= -1) {
+                if (role == 1) {
+                    $("#load-members").append(
+                        '<div class="list__item">\n' +
+                        '                    <div class="list__item--name" id="list-item">' +
+                        data[i]["user_name"] +
+                        "</div>\n" +
+                        '                    <a class="list__item--remove btn" href="javascript:delete_members(' +
+                        room_id +
+                        "," +
+                        data[i]["user_id"] +
+                        ",'Đã xóa')\" onclick=\"return confirm('" +
+                        data[i]["user_name"] +
+                        " sẽ bị xóa khỏi phòng ?')\"><i\n" +
+                        '                            class="fa fa-times"></i></a>\n' +
+                        "                </div>"
+                    );
+                } else {
+                    $("#load-members").append(
+                        '<div class="list__item">\n' +
+                        '                    <div class="list__item--name" id="list-item">' +
+                        data[i]["user_name"] +
+                        "</div>\n" +
+                        "                    \n" +
+                        "                </div>"
+                    );
+                }
+                $("#name_room").text(data[i]["room_name"].replace(nameusss, ''));
+            }
+        },
+    });
+}
+
+function delete_members(room_id, user_id, noti) {
+    $.ajax({
+        url: "remove/" + room_id + "/from/" + user_id,
+        type: "GET",
+        success: function (data) {
+            load_members(room_id);
+            $(".toast").toast("show");
+            $(".toast").html(
+                '<div class="toast-header"> <i class="text-success rounded mr-2 fa fa-check"></i> <strong class="mr-auto">Thông báo</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true"><i class="fa fa-times"></i></span> </button> </div> <div class="toast-body">' +
+                noti +
+                "</div>"
+            );
+        },
+    });
+}
+
+function load_room_info(id) {
+    loadTypeRoom(id);
+    load_members(id);
+    socket.emit("leave", room_id);
+    socket.emit("join", id);
+    tb.disabled = false;
+    room_id = id;
+    load_messages_limit(50, 0, room_id);
+
+    $("#messages").animate({scrollTop: $("#messages").prop("scrollHeight")}, 1000);
+}
+
+$("#register").on("submit", function (e) {
+    e.preventDefault();
+    let roomName = $("input[name=roomName]").val();
+    if (roomName === "") {
+        $("#warning").text("Bạn chưa nhập tên phòng");
+    } else {
+        $.ajax({
+            url: "rooms",
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $("#createRooom").modal("hide");
+                $(".toast").toast("show");
+                $(".toast").html(
+                    '<div class="toast-header"> <i class="text-success rounded mr-2 fa fa-check"></i> <strong class="mr-auto">Thông báo</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true"><i class="fa fa-times"></i></span> </button> </div> <div class="toast-body">Phong ' +
+                    data[0]["name"] +
+                    " da duoc tao thanh cong!</div>"
+                );
+                $(".lists__room").append(
+                    '<a onclick="load_room_info(' +
+                    data[0]["room_id"] +
+                    ')" href="#" class="list--item"><span>' +
+                    data[0]["name"] +
+                    "</span></a>"
+                );
+            },
+        });
+    }
+});
+
+var listMembersCheck = [];
+
+function delArr(idArr) {
+    for (var i = 0; i < listMembersCheck.length; i++) {
+        if (idArr == listMembersCheck[i]) {
+            listMembersCheck.splice(i, 1);
+        }
+    }
+}
+
+$("#list-wrapper").delegate(".membercheck", "click", function () {
+    if (this.checked) {
+        listMembersCheck[listMembersCheck.length] = this.id;
+        $("#addWarning").text("");
+    } else {
+        delArr(this.id);
+    }
+});
+
+$("#btnaddMembers").click(function () {
+    if (listMembersCheck.length == 0) {
+        $("#addWarning").text("Bạn chưa chọn người dùng cần thêm!");
+    } else {
+
+        $("#addWarning").text("");
+        $.ajax({
+            url: "add-members",
+            method: "GET",
+            dataType: "json",
+            data: {
+                data: listMembersCheck,
+                room_id: room_id,
+            },
+            success: function (data) {
+                $("#addMembers").modal("hide");
+                load_members(room_id);
+                $(".toast").toast("show");
+                $(".toast").html(
+                    '<div class="toast-header"> <i class="text-success rounded mr-2 fa fa-check"></i> <strong class="mr-auto">Thông báo</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true"><i class="fa fa-times"></i></span> </button> </div> <div class="toast-body">Thêm thành viên vào phòng thành công!</div>'
+                );
+            },
+        });
+
+        listMembersCheck = [];
+    }
+});
+
+function leaveRoom() {
+    var noti = "Bạn đã rời phòng";
+    delete_members(room_id, usersid, noti);
+    load_group();
+    $("#messages").empty();
+    $("#load-members").empty();
+}
+
+function getImg(id) {
+    $.ajax({
+        type: "GET",
+        url: "/xem-tai-khoan/" + id,
+        success: function (data) {
+            imgUrl = data;
+        },
+    });
+}
+
+function loadTypeRoom(id) {
+    $.ajax({
+        type: "GET",
+        url: "load-type/" + id,
+        success: function (data) {
+            if (data == 1) {
+                $('#tool').html(`<a data-toggle="modal" data-target="#addMembers" id="btn_addtv"><i
+                            class="fa fa fa-user-plus"></i></span>
+                    </a>
+                    <a id="btn_leaveRoom" href="javascript:leaveRoom()"
+                       onclick="return confirm('Bạn sẽ rời phòng?')"><i class="fa fa-sign-out-alt"></i></span>
+                    </a>`);
+            } else {
+                $('#tool').empty();
+                document.getElementById("btn_leaveRoom").style.display =
+                    "block";
+                document.getElementById("btn_addtv").style.display = "block";
+            }
+        },
+    });
+}
+
+$("#mana").click(function () {
+    console.log("ấcchih")
+    $.ajax({
+        url: "/xem-tai-khoan",
+        type: "GET",
+        success: function (res) {
+            $("#listUser").empty();
+            $("#listUser").append(`<tr class='text-center'>
+                            <th>Mã</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Quyền</th>
+                            <th>Hình</th>
+                            <th>Ngày tạo</th>
+                            <th>Reset mật khẩu</th>
+                            <th>Cập nhật thông tin</th>
+                        </tr>`);
+            for (var i = 0; i < res.length; i++) {
+            //     console.log(res[i]["name"]);
+                var role = "";
+                if (res[i]["role"] == 1)
+                {
+                    role = "Quản trị viên";
+                }
+                else {
+                    role = "Người dùng";
+                }
+
+                $("#listUser").append(
+                    `<tr class='text-center'>
+                            <td>12</td>
+                            <td class='text-left'>`+res[i]["name"]+`</td>
+                            <td class='text-left'>`+res[i]["email"]+`</td>
+                            <td>`+role+`</td>
+                            <td id='avt' style='position: relative'><img class='avt' src="`+res[i]["image"]+`" alt='avt'></td>
+                            <td>`+res[i]["created_at"]+`</td>
+                            <td>
+                                <button class='_btn btn btn-success'><i class='fas fa-retweet'></i></button>
+                            </td>
+                            <td>
+                                <button data-toggle='modal' data-target='#exampleModalCenter'
+                                        class='_btn btn btn-warning'><i class='fas fa-edit'></i></button>
+                            </td>
+                        </tr>`
+                );
+            }
+        },
+    });
+});

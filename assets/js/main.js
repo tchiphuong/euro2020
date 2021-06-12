@@ -1,7 +1,7 @@
-$("document").ready(function () {
+$(document).ready(function() {
     //match
     $.ajax({
-        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=10&competitionId=3&fromDate=2012-06-11",
+        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=100&competitionId=1",
         url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
         dataType: "json",
         type: "GET",
@@ -56,11 +56,10 @@ $("document").ready(function () {
                 type = `<div class="font-bold text-center">` + response[i]["round"]["metaData"]["name"] + `</div>`;
             }
             if (response[i]["score"]) {
-                score =  response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"];
+                score =  `<span class="font-bold text-xl">` + response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"] + `</span>`;
             } else {
-                score = moment(response[i]["kickOffTime"]["dateTime"]).format("LT");
+                score = `<span>` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`;
             }
-
             $("#match" + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY")).append(
                 `
                     <div x-data="{ lineup: false }" class="flex flex-col hover:opacity-80 hover:bg-gray-50 ` + response[i]["id"] + `">
@@ -70,7 +69,7 @@ $("document").ready(function () {
                                 <div>
                                     <img class="w-6 h-6" src="` + response[i]["homeTeam"]["logoUrl"] + `" alt="` + response[i]["homeTeam"]["internationalName"] + `">
                                 </div>
-                                <div class="w-3/12 text-center flex flex-col"><span>` + score + `</span>` + minute + `</div>
+                                <div class="w-3/12 text-center flex flex-col">` + score + minute + `</div>
                                 <div>
                                     <img class="w-6 h-6" src="` + response[i]["awayTeam"]["logoUrl"] + `" alt="` + response[i]["awayTeam"]["internationalName"] + `">
                                 </div>
@@ -80,11 +79,11 @@ $("document").ready(function () {
                     </div>
                     `
             );
-            // if (response[i]["score"]) {
                 lineup(response[i]["id"]);
-            // }
         }
     });
+
+
 
     //group
     $.ajax({
@@ -122,13 +121,13 @@ $("document").ready(function () {
                     <tr class="bg-white border-t hover:opacity-80">
                         <td class="p-1">` + response[i]["items"][j]["rank"] + `</td>
                         <td class="py-2"><img class="w-6 h-6" src="` + response[i]["items"][j]["team"]["bigLogoUrl"] + `" alt="` + response[i]["items"][j]["team"]["internationalName"] + `"></td>
-                        <td class="py-1 my-1 capitalize line-clamp-1">` + response[i]["items"][j]["team"]["internationalName"] + `</td>
+                        <td class="py-1 my-1 capitalize truncate">` + response[i]["items"][j]["team"]["internationalName"] + `</td>
                         <td class="py-2 text-center">` + response[i]["items"][j]["played"] + `</td>
                         <td class="py-2 text-center">` + response[i]["items"][j]["won"] + `</td>
                         <td class="py-2 text-center">` + response[i]["items"][j]["drawn"] + `</td>
                         <td class="py-2 text-center">` + response[i]["items"][j]["lost"] + `</td>
-                        <td class="py-2 text-center">` + response[i]["items"][j]["played"] + `</td>
                         <td class="py-2 text-center">` + response[i]["items"][j]["goalDifference"] + `</td>
+                        <td class="py-2 text-center">` + response[i]["items"][j]["points"] + `</td>
                     </tr>`
                 );
             }
@@ -146,7 +145,7 @@ $("document").ready(function () {
                                     <img class="w-20 h-20" src="` + logo + `" alt="` + name + `">
                                 </div>
                                 <div class="flex flex-col">
-                                    <div class="px-2 font-bold line-clamp-1">` + name + `</div>
+                                    <div class="px-2 font-bold truncate">` + name + `</div>
                                     <ul class="flex flex-wrap flex-grow m-1" id="team` + id + `">
                                     </ul>
                                 </div>
@@ -189,10 +188,10 @@ $("document").ready(function () {
         // lineup
         function lineup(matchId)
         {
-        $.ajax({
-            url: 'https://match.uefa.com/v3/matches/'+ matchId +'/lineups',
-            dataType: 'json',
-            type: 'GET',
+            $.ajax({
+                url: 'https://match.uefa.com/v3/matches/'+ matchId +'/lineups',
+                dataType: 'json',
+                type: 'GET',
             }).done(function(response) {
                 if(response["lineupStatus"] == "NOT_AVAILABLE")
                 {
@@ -202,16 +201,16 @@ $("document").ready(function () {
                 {
                     $("." + matchId).append(
                         `
-                            <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 top-20 rounded-xl">    
+                            <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 mb-2 top-20 rounded-xl">    
                                 <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
-                                <div class="flex justify-between bg-white">
+                                <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
                                     <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
                                     </ul>
                                     <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
                                     </ul>
                                 </div>
                                 <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
-                                <div class="flex justify-between bg-white">
+                                <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
                                     <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
                                     </ul>
                                     <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
@@ -225,52 +224,56 @@ $("document").ready(function () {
                     {
                         $("#lineUpHomeTeam" + response["matchId"]).append(
                             `
-                            <li class="flex text-sm items-center justify-start w-full p-1 border-t hover:bg-gray-50">
+                            <li class="flex text-sm items-center justify-start w-full p-1">
                                 <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                                <span class="p-1 line-clamp-1">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                             </li>
                             `
                         );
+                        toolTip('#player');
                     }
 
                     for (let i = 0; i < Object.keys(response["homeTeam"]["bench"]).length; i -= -1)
                     {
                         $("#subHomeTeam" + response["matchId"]).append(
                             `
-                            <li class="flex text-sm items-center justify-start w-full p-1 border-t hover:bg-gray-50">
+                            <li class="flex text-sm items-center justify-start w-full p-1">
                                 <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                                <span class="p-1 line-clamp-1">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                             </li>
                             `
                         );
+                        toolTip('#player');
                     }
                     
                     for (let i = 0; i < Object.keys(response["awayTeam"]["field"]).length; i -= -1)
                     {
                         $("#lineUpAwayTeam" + response["matchId"]).append(
                             `
-                            <li class="flex text-sm items-center justify-end w-full p-1 border-t hover:bg-gray-50">
-                                <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                            <li class="flex text-sm items-center justify-end w-full p-1">
+                                <span id="player" data-title='` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
                             </li>
                             `
                         );
+                        toolTip('#player');
                     }
                     
                     for (let i = 0; i < Object.keys(response["awayTeam"]["bench"]).length; i -= -1)
                     {
                         $("#subAwayTeam" + response["matchId"]).append(
                             `
-                            <li class="flex text-sm items-center justify-end w-full p-1 border-t hover:bg-gray-50">
-                                <span class="p-1 text-right line-clamp-1">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                            <li class="flex text-sm items-center justify-end w-full p-1">
+                                <span id="player" data-title='` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
                             </li>
                             `
                         );
+                        toolTip('#player');
                     }
                 }
             });
@@ -321,8 +324,24 @@ $("document").ready(function () {
             });
             
         }
+
+        
+        function toolTip(tag)
+        {
+            tippy(tag, {
+                content:(reference)=>reference.getAttribute('data-title'),
+                 onMount(instance) {
+                    instance.popperInstance.setOptions({
+                      placement :instance.reference.getAttribute('data-placement')
+                    });
+                },
+                allowHTML: true,
+              });
+        }
+        
 });
 
+    
 
 // team https://comp.uefa.com/v1/teams/135,57166
 // league https://comp.uefa.com/v1/competitions/3
