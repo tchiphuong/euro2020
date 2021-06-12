@@ -227,7 +227,7 @@ $(document).ready(function() {
                             <li class="flex text-sm items-center justify-start w-full p-1">
                                 <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                                <span id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                             </li>
                             `
                         );
@@ -241,7 +241,7 @@ $(document).ready(function() {
                             <li class="flex text-sm items-center justify-start w-full p-1">
                                 <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                                <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                             </li>
                             `
                         );
@@ -253,7 +253,7 @@ $(document).ready(function() {
                         $("#lineUpAwayTeam" + response["matchId"]).append(
                             `
                             <li class="flex text-sm items-center justify-end w-full p-1">
-                                <span id="player" data-title='` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["awayTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
                             </li>
@@ -267,7 +267,7 @@ $(document).ready(function() {
                         $("#subAwayTeam" + response["matchId"]).append(
                             `
                             <li class="flex text-sm items-center justify-end w-full p-1">
-                                <span id="player" data-title='` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <span id="player" data-title='` + response["awayTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
                                 <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
                             </li>
