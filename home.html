@@ -36,6 +36,24 @@
     }
 </style>
 <body class="bg-gray-100">
+    <!-- <div id="loadding">
+        <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur-sm">
+            <svg width="51px" heigth="50px" viewBox="0 0 51 50">
+              <rect y="0" width="13" height="50" fill="#1fa2ff">
+                <animate attributeName="height" values="50;10;50;" begin="0s" dur="1s" repeatCount="indefinite" />
+                <animate attributeName="y" values="0;20;0;" begin="0s" dur="1s" repeatCount="indefinite" />
+              </rect>
+              <rect x="19" y="0" width="13" height="50" fill="#12d8fa">
+                <animate attributeName="height" values="50;10;50;" begin="0.2s" dur="1s" repeatCount="indefinite" />
+                <animate attributeName="y" values="0;20;0;" begin="0.2s" dur="1s" repeatCount="indefinite" />
+              </rect>
+              <rect x="38" y="0" width="13" height="50" fill="#06ffcb">
+                <animate attributeName="height" values="50;10;50;" begin="0.4s" dur="1s" repeatCount="indefinite" />
+                <animate attributeName="y" values="0;20;0;" begin="0.4s" dur="1s" repeatCount="indefinite" />
+              </rect>
+            </svg>
+        </div>
+    </div> -->
     <div x-data="{ menu: false, hamburger: true }" class="fixed z-30 flex items-center justify-center w-full py-3 bg-white shadow-lg lg:hidden">
         <div @click="{ menu = true, hamburger = false }" x-show.in.duration.200ms.out.duration.50ms="hamburger" class="absolute flex flex-col justify-around p-2 rounded-md h-11 left-3 hover:bg-gray-200 hover:opacity-80">
             <div class="w-6 h-1 rounded-full bg-cyanEU"></div>
@@ -57,11 +75,12 @@
     </div>
     <div class="fixed z-10 items-center hidden w-full px-10 shadow lg:flex" style="background: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
         <a href="#"><img class="h-8 mx-4" src="assets/images/logo white.png" alt=""></a>
-        <ul class="flex mx-4">
+        <ul class="flex flex-grow mx-4">
             <li><a class="block px-6 py-3 text-white hover:opacity-80" href="#match">Fixtures & Results</a></li>
             <li><a class="block px-6 py-3 text-white hover:opacity-80" href="#group">Groups</a></li>
             <li><a class="block px-6 py-3 text-white hover:opacity-80" href="#team">Team</a></li>
         </ul>
+        <div class="px-6 py-3 text-white hover:opacity-80">Monday, June 14, 2021 2:10 AM</div>
     </div>
     <div id="match" class="container px-2 pt-16 mx-auto">
         <div class="px-2 mx-3 my-2 text-xl font-bold uppercase border-l-4 border-cyanEU text-cyanEU">Fixtures & Results</div>
@@ -71,7 +90,7 @@
                     <div class="p-3 font-bold uppercase">12/06/2021</div>
                     <div x-data="{ lineup: false }" class="relative flex flex-col hover:opacity-80 hover:bg-gray-50">
                         <div class="py-2 font-bold text-center border-t">Group A</div>
-                        <div @click="{ lineup = true }" class="flex items-center justify-center py-3" onclick="myFunction()">
+                        <div onclick="test(12313123)"  @click="{ lineup = true }" class="flex items-center justify-center py-3">
                             <div class="w-4/12 px-2 text-right capitalize line-clamp-2">Turkey</div>
                             <div><img class="w-6 h-6" src="https://www.uefa.com/imgml/flags/70x70/TUR.png" alt="Turkey"></div>
                             <div class="w-2/12 text-center">02:00</div>
@@ -4085,6 +4104,7 @@
 	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/main.js"></script>
     <script>
         tippy('span', {
           content:(reference)=>reference.getAttribute('data-title'),
@@ -4095,10 +4115,6 @@
           },
           allowHTML: true,
         });
-        myFunction()
-    {
-        alert("inside my function");
-    };
     </script>
 </body>
 </html>
