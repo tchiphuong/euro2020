@@ -47,9 +47,9 @@
     <!-- <button onclick="notifyMe('Hà Lan - Ngạn', 'Thống báo chơi')">Notify me!</button> -->
     <div x-data="{ menu: false, hamburger: true }" class="fixed z-30 flex items-center justify-center w-full py-3 bg-white shadow-lg lg:hidden">
         <div @click="{ menu = true, hamburger = false }" x-show.in.duration.200ms.out.duration.50ms="hamburger" class="absolute flex flex-col justify-around p-2 rounded-md h-11 left-3 hover:bg-gray-200 hover:opacity-80">
-            <div class="h-1 rounded-full bg-cyanEU w-7"></div>
-            <div class="w-5 h-1 rounded-full bg-cyanEU"></div>
-            <div class="w-3 h-1 rounded-full bg-cyanEU"></div>
+            <div data-aos="fade-right" data-aos-duration="500" class="h-1 rounded-full bg-cyanEU w-7"></div>
+            <div data-aos="fade-right" data-aos-duration="1000" class="w-5 h-1 rounded-full bg-cyanEU"></div>
+            <div data-aos="fade-right" data-aos-duration="1500" class="w-3 h-1 rounded-full bg-cyanEU"></div>
         </div>
         <div @click="{ menu = false, hamburger = true }" x-show.in.duration.200ms.out.duration.50ms="menu" class="absolute flex flex-col justify-around p-2 rounded-md h-11 w-11 left-3 hover:bg-gray-200 hover:opacity-80">
             <div class="absolute h-1 transform rotate-45 rounded-full bg-cyanEU w-9 left-1"></div>
