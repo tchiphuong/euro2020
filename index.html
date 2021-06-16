@@ -11,6 +11,7 @@
     <title>Euro 2020</title>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/notify.js"></script>
 </head>
 <style>
     @font-face {
@@ -43,6 +44,7 @@
     <div id="load">
         
     </div>
+    <!-- <button onclick="notifyMe('Hà Lan - Ngạn', 'Thống báo chơi')">Notify me!</button> -->
     <div x-data="{ menu: false, hamburger: true }" class="fixed z-30 flex items-center justify-center w-full py-3 bg-white shadow-lg lg:hidden">
         <div @click="{ menu = true, hamburger = false }" x-show.in.duration.200ms.out.duration.50ms="hamburger" class="absolute flex flex-col justify-around p-2 rounded-md h-11 left-3 hover:bg-gray-200 hover:opacity-80">
             <div class="h-1 rounded-full bg-cyanEU w-7"></div>

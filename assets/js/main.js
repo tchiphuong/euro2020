@@ -1,32 +1,38 @@
 $(document).ready(function() {
-
-    var score = "";
-    var minute = "";
     setInterval(function () {
         var times = moment().format("dddd, DD/MM/YYYY, hh:mm:ss");
         $("#timenow").html(times)
         $.ajax({
+            // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=10&limit=1&competitionId=1&fromDate=2021-05-29&toDate=2021-05-29",
             url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
             dataType: "json",
             type: "GET",
         }).done(function (response) {
             for (let i = 0; i < Object.keys(response).length; i -= -1) {
-                if(response[i]["minute"])
+                if(response[i]["status"] == "LVIE")
                 {
-                    $(".m" + response[i]["id"]).html(
-                        response[i]["minute"]["normal"]+"'"
-                    );
+                    if(response[i]["minute"])
+                    {
+                        $(".m" + response[i]["id"]).html(
+                            response[i]["minute"]["normal"]+"' +" +response[i]["minute"]["injury"] 
+                        );
+                    }
+                    else{
+                        $(".m" + response[i]["id"]).empty();
+                    }
+                    if (response[i]["score"]) {
+                        // insertScore(response[i]["id"], response[i]["score"]["regular"]["away"], response[i]["score"]["regular"]["home"], response[i]["awayTeam"]["internationalName"], response[i]["homeTeam"]["internationalName"]);
+                        $(".s" + response[i]["id"]).html(response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"]);
+                    } else {
+                        score = `<span>` +  + `</span>`;
+                        $(".s" + response[i]["id"]).html(
+                            `<span class="font-normal text-base">` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`
+                        );
+                    }
                 }
-                else{
-                    $(".m" + response[i]["id"]).empty();
-                }
-                if (response[i]["score"]) {
-                    $(".s" + response[i]["id"]).html(response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"]);
-                } else {
-                    score = `<span>` +  + `</span>`;
-                    $(".s" + response[i]["id"]).html(
-                        `<span class="font-normal text-base">` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`
-                    );
+                else
+                {
+                    return;
                 }
             }
         })
@@ -35,13 +41,15 @@ $(document).ready(function() {
 
     //match
     $.ajax({
-        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=10&limit=1&competitionId=1&fromDate=2020-10-20&toDate=2021-05-29",
+        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=10&limit=1&competitionId=1&fromDate=2021-05-29&toDate=2021-05-29",
         url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
         dataType: "json",
         type: "GET",
     }).done(function (response) {
         var date = "";
         var type = "";
+        var score = "";
+        var minute = "";
         for (let i = 0; i < Object.keys(response).length; i -= -1) {
             if (i > 0) {
                 if (moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") === moment(response[i - 1]["kickOffTime"]["dateTime"]).format("DDMMYYYY"))
@@ -49,12 +57,25 @@ $(document).ready(function() {
                     date = "";
                 }
                 else
+                if(moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") === moment().format("DDMMYYYY"))
                 {
                     date = 
                     `
                         <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
-                                <div class="p-3 font-bold uppercase">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
+                                <div class="p-3 font-bold capitalize">Today</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                else
+                {
+                    date = 
+                    `
+                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                            <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
+                                <div class="p-3 font-bold capitalize">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +88,7 @@ $(document).ready(function() {
                     `
                         <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
-                                <div class="p-3 font-bold uppercase">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
+                                <div class="p-3 font-bold capitalize">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
                             </div>
                         </div>
@@ -89,13 +110,14 @@ $(document).ready(function() {
             }
             if (response[i]["score"]) {
                 score =  response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"];
+                // insertScore(response[i]["id"], response[i]["score"]["regular"]["away"], response[i]["score"]["regular"]["home"], response[i]["awayTeam"]["internationalName"], response[i]["homeTeam"]["internationalName"]);
             } else {
                 score = `<span class="font-normal text-base">` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`;
             }
     
             $("#match" + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY")).append(
                 `
-                    <div onclick="lineup(\'` + response[i]["id"] + `\');" x-data="{ lineup: false }" class="flex flex-col hover:opacity-80 hover:bg-gray-50 ` + response[i]["id"] + `">
+                    <div onclick="lineup(\'` + response[i]["id"] + `\',\'` + response[i]["lineupStatus"] + `\');" x-data="{ lineup: false }" class="flex flex-col hover:opacity-80 hover:bg-gray-50 ` + response[i]["id"] + `">
                         <div class="py-2 border-t">` + type + `
                             <div @click="{ lineup = true }" class="flex items-center justify-center py-2">
                                 <div class="w-4/12 px-2 text-right capitalize line-clamp-3">` + response[i]["homeTeam"]["internationalName"] + `</div>
@@ -262,169 +284,295 @@ $(document).ready(function() {
             });
             
         }
-
-        
-        
-    
 });
 
-function playerType(res)
-        {
-            var playerType = "";
-            if(res == "CAPTAIN")
-            {
-                playerType = `<span class="px-1">(C)</span>`;
-            }
-            else if(res == "GOALKEEPER")
-            {
-                playerType  = `<span class="px-1">(GK)</span>`;
-            }
-            else if(res == "GOALKEEPER_CAPTAIN")
-            {
-                playerType  = `<span class="px-1">(GK)</span><span class="px-1">(C)</span>`;
-            }
-            else
-            {
-                playerType = "";
-            }
-            
-            return playerType;
-            
-        }
+function captain(res)
+{
+    var playerType = "";
+    if(res == "CAPTAIN" || res == "GOALKEEPER_CAPTAIN")
+    {
+        playerType  = `
+        <span class="absolute bottom-0 right-0 transform translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-yellow-500">c</span>`;
+    }
+    else
+    {
+        playerType = "";
+    }
+    
+    return playerType;
+    
+}
 
-        function toolTip(tag)
-        {
-            tippy(tag, {
-                content:(reference)=>reference.getAttribute('data-title'),
-                 onMount(instance) {
-                    instance.popperInstance.setOptions({
-                      placement :instance.reference.getAttribute('data-placement')
-                    });
-                },
-                allowHTML: true,
-              });
-        }
+function playerType(res)
+{
+    var playerType = "";
+    if(res == "GOALKEEPER" || res == "GOALKEEPER_CAPTAIN")
+    {
+        playerType  = `<span class="px-1">(GK)</span>`;
+    }
+    else
+    {
+        playerType = "";
+    }
+    
+    return playerType;
+    
+}
+
+function toolTip(tag)
+{
+    tippy(tag, {
+        content:(reference)=>reference.getAttribute('data-title'),
+            onMount(instance) {
+            instance.popperInstance.setOptions({
+                placement :instance.reference.getAttribute('data-placement')
+            });
+        },
+        allowHTML: true,
+        });
+}
+
+
+var lineUpArr = [];
 
 
 // lineup
-function lineup(matchId)
+function lineup(matchId, lineupStatus)
 {
-    $.ajax({
-        url: 'https://match.uefa.com/v3/matches/'+ matchId +'/lineups',
-        dataType: 'json',
-        type: 'GET',
-    }).done(function(response) {
-        if(response["lineupStatus"] == "NOT_AVAILABLE")
+    loadLineUp = false;
+    element = {};
+    element.matchId = matchId;
+    for(let i = 0; i < Object.keys(lineUpArr).length; i -= -1)
+    {
+        if(matchId == lineUpArr[i]["matchId"])
         {
-            return
+            loadLineUp = true;
         }
         else
         {
-            $("#load").append(
-                `
-                <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur-sm">
-                    <svg width="51px" heigth="50px" viewBox="0 0 51 50">
-                        <rect y="0" width="13" height="50" fill="#1fa2ff">
-                        <animate attributeName="height" values="50;10;50;" begin="0s" dur="1s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="0;20;0;" begin="0s" dur="1s" repeatCount="indefinite" />
-                        </rect>
-                        <rect x="19" y="0" width="13" height="50" fill="#12d8fa">
-                        <animate attributeName="height" values="50;10;50;" begin="0.2s" dur="1s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="0;20;0;" begin="0.2s" dur="1s" repeatCount="indefinite" />
-                        </rect>
-                        <rect x="38" y="0" width="13" height="50" fill="#06ffcb">
-                        <animate attributeName="height" values="50;10;50;" begin="0.4s" dur="1s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="0;20;0;" begin="0.4s" dur="1s" repeatCount="indefinite" />
-                        </rect>
-                    </svg>
-                </div>
-                `
-            )
-            $(".lineup" + matchId).empty();
-            setTimeout(() => { 
-            $(".lineup" + matchId).append(
-                `
-                    <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 mb-2 top-20 rounded-xl">    
-                        <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
-                        <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
-                            <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                            </ul>
-                            <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                            </ul>
-                        </div>
-                        <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
-                        <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
-                            <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                            </ul>
-                            <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                            </ul>
-                        </div>
-                    </div>
-                `
-            );
-
-            for (let i = 0; i < Object.keys(response["homeTeam"]["field"]).length; i -= -1)
-            {
-                $("#lineUpHomeTeam" + response["matchId"]).append(
-                    `
-                    <li class="flex text-sm items-center justify-start w-full p-1">
-                        <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
-                        <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                        <span id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `</span>
-                    </li>
-                    `
-                );
-                toolTip('#player');
-            }
-
-            for (let i = 0; i < Object.keys(response["homeTeam"]["bench"]).length; i -= -1)
-            {
-                $("#subHomeTeam" + response["matchId"]).append(
-                    `
-                    <li class="flex text-sm items-center justify-start w-full p-1">
-                        <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
-                        <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                        <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `</span>
-                    </li>
-                    `
-                );
-                toolTip('#player');
-            }
-            
-            for (let i = 0; i < Object.keys(response["awayTeam"]["field"]).length; i -= -1)
-            {
-                $("#lineUpAwayTeam" + response["matchId"]).append(
-                    `
-                    <li class="flex text-sm items-center justify-end w-full p-1">
-                        <span id="player" data-title='` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                        <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                        <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
-                    </li>
-                    `
-                );
-                toolTip('#player');
-            }
-            
-            for (let i = 0; i < Object.keys(response["awayTeam"]["bench"]).length; i -= -1)
-            {
-                $("#subAwayTeam" + response["matchId"]).append(
-                    `
-                    <li class="flex text-sm items-center justify-end w-full p-1">
-                        <span id="player" data-title='` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                        <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
-                        <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
-                    </li>
-                    `
-                );
-                toolTip('#player');
-                $("#load").empty();
-            }
-            
-        }, 1);
+            // return;
         }
-    });
+    }
+
+    if(loadLineUp == false)
+    {
+        if(lineupStatus == "TACTICAL_AVAILABLE" )
+        {
+            console.log("Loading...");
+            lineUpArr.push(element);
+            $.ajax({
+                url: 'https://match.uefa.com/v3/matches/'+ matchId +'/lineups',
+                dataType: 'json',
+                type: 'GET',
+            }).done(function(response) {
+                if(response["lineupStatus"] == "NOT_AVAILABLE")
+                {
+                    return
+                }
+                else
+                {
+                    $("#load").append(
+                        `
+                        <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur-sm">
+                            <svg width="51px" heigth="50px" viewBox="0 0 51 50">
+                                <rect y="0" width="13" height="50" fill="#1fa2ff">
+                                <animate attributeName="height" values="50;10;50;" begin="0s" dur="1s" repeatCount="indefinite" />
+                                <animate attributeName="y" values="0;20;0;" begin="0s" dur="1s" repeatCount="indefinite" />
+                                </rect>
+                                <rect x="19" y="0" width="13" height="50" fill="#12d8fa">
+                                <animate attributeName="height" values="50;10;50;" begin="0.2s" dur="1s" repeatCount="indefinite" />
+                                <animate attributeName="y" values="0;20;0;" begin="0.2s" dur="1s" repeatCount="indefinite" />
+                                </rect>
+                                <rect x="38" y="0" width="13" height="50" fill="#06ffcb">
+                                <animate attributeName="height" values="50;10;50;" begin="0.4s" dur="1s" repeatCount="indefinite" />
+                                <animate attributeName="y" values="0;20;0;" begin="0.4s" dur="1s" repeatCount="indefinite" />
+                                </rect>
+                            </svg>
+                        </div>
+                        `
+                    )
+                    $(".lineup" + matchId).empty();
+                    setTimeout(() => { 
+                    $(".lineup" + matchId).append(
+                        `
+                            <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 mb-2 top-20 rounded-xl">    
+                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
+                                <div class="justify-between mb-2 text-white bg-white aspect-w-2 aspect-h-3" style="background: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
+                                    <div class="absolute w-4/12 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-300 rounded-full left-1/2 top-1/2" style="height: 22.222%;"></div>
+                                    <div class="absolute w-2 h-2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 rounded-full left-1/2 top-1/2"></div>
+                                    <div class="absolute w-1/5 transform -translate-x-1/2 border-2 border-gray-300 rounded-full translate-y-1/4 h-1/6 left-1/2" style="top: calc(2.5rem);"></div>
+                                    <div class="absolute w-7/12 transform -translate-x-1/2 border-2 border-t-0 border-gray-300 backdrop-filter backdrop-blur-lg h-1/6 left-1/2" style="top: 2.5rem;">
+                                        <div class="absolute top-0 w-7/12 transform -translate-x-1/2 border-2 border-t-0 border-gray-300 left-1/2 h-1/2"></div>
+                                    </div>
+                                    <div class="absolute w-1/5 transform -translate-x-1/2 border-2 border-gray-300 rounded-full -translate-y-1/4 h-1/6 left-1/2" style="top: calc(100% - 16.6667% - 2.5rem);"></div>
+                                    <div class="absolute w-7/12 transform -translate-x-1/2 border-2 border-gray-300 backdrop-filter backdrop-blur-lg h-1/6 left-1/2" style="top: calc(100% - 16.6667% - 2.5rem);">
+                                        <div class="absolute bottom-0 w-7/12 transform -translate-x-1/2 border-2 border-b-0 border-gray-300 left-1/2 h-1/2"></div>
+                                    </div>
+                                    <div class="overflow-hidden">
+                                    <div class="flex items-center h-10 px-2 py-1 border-2 border-b-0 border-gray-300 bg-cyanEU">
+                                    <img class="h-full" src="` + response["homeTeam"]["team"]["bigLogoUrl"] + `" alt="` + response["homeTeam"]["team"]["internationalName"] + `">
+                                        <div class="flex flex-col h-full px-3">
+                                        <span class="text-xs h-1/2">` + response["homeTeam"]["team"]["internationalName"] + `</span>
+                                        <span class="text-xs h-1/2">Coach: ` + response["homeTeam"]["coaches"][0]["person"]["translations"]["name"]["EN"] + `</span>
+                                        </div>
+                                    </div>
+                                    <ul id="lineUpHomeTeam` + matchId + `" class="relative w-full border-2 border-b border-gray-300" style="height: calc(50% - 2.5rem);">
+                                        
+                                    </ul>
+                                    <ul id="lineUpAwayTeam` + matchId + `" class="relative w-full transform rotate-180 border-2 border-t border-gray-300" style="height: calc(50% - 2.5rem);">
+                                        
+                                    </ul>
+                                    <div class="flex flex-row-reverse items-center h-10 px-2 py-1 mb-1 border-2 border-t-0 border-gray-300 bg-cyanEU">
+                                        <img class="h-full" src="` + response["awayTeam"]["team"]["bigLogoUrl"] + `" alt="` + response["awayTeam"]["team"]["internationalName"] + `">
+                                        <div class="flex flex-col justify-end h-full px-3">
+                                            <span class="text-xs text-right h-1/2">` + response["awayTeam"]["team"]["internationalName"] + `</span>
+                                            <span class="text-xs h-1/2">Coach: ` + response["awayTeam"]["coaches"][0]["person"]["translations"]["name"]["EN"] + `</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
+                                <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
+                                    <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
+                                    </ul>
+                                    <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
+                                    </ul>
+                                </div>
+                            </div>
+                        `
+                        
+                    //     <div class="flex justify-between bg-white rounded-lg overflow-hidden hover:shadow opacity-100">
+                    //     <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
+                    //     </ul>
+                    //     <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
+                    //     </ul>
+                    // </div>
+                    );
+
+                    for (let i = 0; i < Object.keys(response["homeTeam"]["field"]).length; i -= -1)
+                    {
+                        // $("#lineUpHomeTeam" + response["matchId"]).append(
+                        //     `
+                        //     <li class="flex text-sm items-center justify-start w-full p-1">
+                        //         <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
+                        //         <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                        //         <span id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `</span>
+                        //     </li>
+                        //     `
+                        // );
+
+                        $("#lineUpHomeTeam" + response["matchId"]).append(
+                            `
+                                <li class="absolute flex flex-col items-center justify-center h-6 transform -translate-x-1/2" style="left: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
+                                    <div class="relative flex">
+                                        <img class="w-8 h-8 rounded-full shadow" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                        ` + captain(response["homeTeam"]["field"][i]["type"]) + `
+                                        <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
+                                    </div>
+                                    <div class="text-xs text-center">` + playerType(response["homeTeam"]["field"][i]["type"]) + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</div>
+                                </li>
+                            `
+                        );
+                        toolTip('#player');
+                    }
+
+                    for (let i = 0; i < Object.keys(response["homeTeam"]["bench"]).length; i -= -1)
+                    {
+                        $("#subHomeTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-start w-full p-1">
+                                <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
+                                <img class="w-7 h-7 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `</span>
+                            </li>
+                            `
+                        );
+
+                        toolTip('#player');
+                    }
+                    
+                    for (let i = 0; i < Object.keys(response["awayTeam"]["field"]).length; i -= -1)
+                    {
+                        // $("#lineUpAwayTeam" + response["matchId"]).append(
+                        //     `
+                        //     <li class="flex text-sm items-center justify-end w-full p-1">
+                        //         <span id="player" data-title='` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                        //         <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                        //         <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
+                        //     </li>
+                        //     `
+                        // );
+
+                        $("#lineUpAwayTeam" + response["matchId"]).append(
+                            `
+                                <li class="absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2" style="left: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
+                                    <div class="relative flex">
+                                        <img class="w-7 h-7 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                        ` + captain(response["awayTeam"]["field"][i]["type"]) + `
+                                        <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
+                                    </div>
+                                    <div class="text-xs text-center">` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</div>
+                                </li>
+                            `
+                        );
+                        toolTip('#player');
+                    }
+                    
+                    for (let i = 0; i < Object.keys(response["awayTeam"]["bench"]).length; i -= -1)
+                    {
+                        $("#subAwayTeam" + response["matchId"]).append(
+                            `
+                            <li class="flex text-sm items-center justify-end w-full p-1">
+                                <span id="player" data-title='` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
+                            </li>
+                            `
+                        );
+                        toolTip('#player');
+                        $("#load").empty();
+                    }
+                    
+                }, 1);
+                }
+            });
+        }
+    }
     
 }
+
+// var oldScore = [
+//     {
+//         "awayTeam": {"internationalName": "awayN"},
+//         "id": 1,
+//         "homeTeam": {"internationalName": "homeN"},
+//         "score":
+//         {
+//             "regular":{"away": 432, "home": 09808}
+//         }
+//     }
+// ];
+
+// function insertScore(id, awayS, homeS, awayN, homeN)
+// {
+//     element = {};
+//     element.awayTeam = {"internationalName": awayN};
+//     element.id = id;
+//     element.homeTeam = {"internationalName": homeN};
+//     element.score = {"regular":{"away": awayS, "home": homeS}
+//     };
+    
+//     for(let i = 0; i < Object.keys(oldScore).length; i++)
+//     {
+//         // element = {};
+//         if(oldScore[i]["id"] != id)
+//         {
+//             oldScore.push(element);
+//             // notifyMe('Hà Lan 3-2 Ukraine', 'GOALLLLLLLL!!!!');
+//         }
+//     }
+//         console.log(oldScore);
+// }
     
 
 // team https://comp.uefa.com/v1/teams/135,57166
