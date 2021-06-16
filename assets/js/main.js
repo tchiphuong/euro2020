@@ -372,7 +372,6 @@ function lineup(matchId, lineupStatus)
             }).done(function(response) {
                 if(response["lineupStatus"] == "NOT_AVAILABLE")
                 {
-                    return
                 }
                 else
                 {
@@ -468,13 +467,13 @@ function lineup(matchId, lineupStatus)
 
                         $("#lineUpHomeTeam" + response["matchId"]).append(
                             `
-                                <li class="filter drop-shadow absolute flex flex-col items-center justify-center h-6 transform -translate-x-1/2" style="left: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
+                                <li id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="bottom" class="filter drop-shadow absolute flex flex-col items-center justify-center h-6 transform -translate-x-1/2" style="left: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
                                     <div class="relative flex">
                                         <img class="w-8 h-8 rounded-full shadow" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                         ` + captain(response["homeTeam"]["field"][i]["type"]) + `
                                         <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
                                     </div>
-                                    <div class="text-xs text-center">` + playerType(response["homeTeam"]["field"][i]["type"]) + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</div>
+                                    <div class="text-xs text-center">` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `</div>
                                 </li>
                             `
                         );
@@ -510,13 +509,13 @@ function lineup(matchId, lineupStatus)
 
                         $("#lineUpAwayTeam" + response["matchId"]).append(
                             `
-                                <li class="filter drop-shadow text-shadow absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2" style="left: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
+                                <li id="player" data-title='` + response["awayTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="bottom" class="filter drop-shadow text-shadow absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2" style="left: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
                                     <div class="relative flex">
                                         <img class="w-8 h-8 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                         ` + captain(response["awayTeam"]["field"][i]["type"]) + `
                                         <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
                                     </div>
-                                    <div class="text-xs text-center">` + playerType(response["awayTeam"]["field"][i]["type"]) + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `</div>
+                                    <div class="text-xs text-center">` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["field"][i]["type"]) + `</div>
                                 </li>
                             `
                         );
@@ -541,6 +540,10 @@ function lineup(matchId, lineupStatus)
                 }, 1);
                 }
             });
+        }
+        else
+        {
+            swal("Lineup not available!");
         }
     }
     

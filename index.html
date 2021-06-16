@@ -41,10 +41,7 @@
     }
 </style>
 <body class="bg-gray-100">
-    <div id="load">
-        
-    </div>
-    <!-- <button onclick="notifyMe('Hà Lan - Ngạn', 'Thống báo chơi')">Notify me!</button> -->
+    <div id="load"></div>
     <div x-data="{ menu: false, hamburger: true }" class="fixed z-30 flex items-center justify-center w-full py-3 bg-white shadow-lg lg:hidden">
         <div @click="{ menu = true, hamburger = false }" x-show.in.duration.200ms.out.duration.50ms="hamburger" class="absolute flex flex-col justify-around p-2 rounded-md h-11 left-3 hover:bg-gray-200 hover:opacity-80">
             <div data-aos="fade-right" data-aos-duration="500" class="h-1 rounded-full bg-cyanEU w-7"></div>
@@ -160,6 +157,7 @@
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
 	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         
     </script>
