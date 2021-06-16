@@ -9,7 +9,7 @@ $(document).ready(function() {
             type: "GET",
         }).done(function (response) {
             for (let i = 0; i < Object.keys(response).length; i -= -1) {
-                if(response[i]["status"] == "LVIE")
+                if(response[i]["status"] == "LIVE")
                 {
                     if(response[i]["minute"])
                     {
