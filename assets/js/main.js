@@ -13,9 +13,18 @@ $(document).ready(function() {
                 {
                     if(response[i]["minute"])
                     {
-                        $(".m" + response[i]["id"]).html(
-                            response[i]["minute"]["normal"]+"' +" +response[i]["minute"]["injury"] 
-                        );
+                        if(response[i]["minute"]["injury"])
+                        {
+                            $(".m" + response[i]["id"]).html(
+                                response[i]["minute"]["normal"]+"' +" +response[i]["minute"]["injury"] 
+                            );
+                        }
+                        else
+                        {
+                            $(".m" + response[i]["id"]).html(
+                                response[i]["minute"]["normal"]+"'"
+                            );
+                        }
                     }
                     else{
                         $(".m" + response[i]["id"]).empty();
@@ -29,10 +38,6 @@ $(document).ready(function() {
                             `<span class="font-normal text-base">` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`
                         );
                     }
-                }
-                else
-                {
-                    return;
                 }
             }
         })
