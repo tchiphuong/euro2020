@@ -482,7 +482,7 @@ function lineup(matchId, lineupStatus)
                             `
                             <li class="flex text-sm items-center justify-start w-full p-1">
                                 <span class="w-2/12 p-1 text-center">` + response["homeTeam"]["bench"][i]["jerseyNumber"] + `</span>
-                                <img class="w-7 h-7 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["homeTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span id="player" data-title='` + response["homeTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `' data-placement="top" class="p-1 truncate">` + response["homeTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + playerType(response["homeTeam"]["bench"][i]["type"]) + `</span>
                             </li>
                             `
@@ -507,7 +507,7 @@ function lineup(matchId, lineupStatus)
                             `
                                 <li class="filter drop-shadow text-shadow absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2" style="left: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
                                     <div class="relative flex">
-                                        <img class="w-7 h-7 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                        <img class="w-8 h-8 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                         ` + captain(response["awayTeam"]["field"][i]["type"]) + `
                                         <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
                                     </div>
@@ -524,7 +524,7 @@ function lineup(matchId, lineupStatus)
                             `
                             <li class="flex text-sm items-center justify-end w-full p-1">
                                 <span id="player" data-title='` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="top" class="p-1 text-right truncate">` + playerType(response["awayTeam"]["bench"][i]["type"]) + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `</span>
-                                <img class="w-7 h-7 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                <img class="w-8 h-8 mr-1 bg-gray-100 rounded-full" src="` + response["awayTeam"]["bench"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["bench"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                 <span class="w-2/12 p-1 text-center">` + response["awayTeam"]["bench"][i]["jerseyNumber"] + `</span>
                             </li>
                             `
