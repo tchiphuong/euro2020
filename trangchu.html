@@ -81,15 +81,17 @@
                         <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 top-20 rounded-xl">
                             <div class="pt-3 pb-2 font-bold text-center">Lineup</div>
                             <div class="justify-between mb-2 text-white bg-white aspect-w-2 aspect-h-3" style="background: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
-                                <div class="absolute w-4/12 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-300 rounded-full left-1/2 top-1/2" style="height: 22.222%;"></div>
+                                <div class="absolute w-4/12 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-300 rounded-full left-1/2 top-1/2" style="height: calc(100% / 12 * 4 * 2 / 3 )"></div>
                                 <div class="absolute w-2 h-2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 rounded-full left-1/2 top-1/2"></div>
                                 <div class="absolute w-1/5 transform -translate-x-1/2 border-2 border-gray-300 rounded-full translate-y-1/4 h-1/6 left-1/2" style="top: calc(2.5rem);"></div>
                                 <div class="absolute w-7/12 transform -translate-x-1/2 border-2 border-t-0 border-gray-300 backdrop-filter backdrop-blur-lg h-1/6 left-1/2" style="top: 2.5rem;">
                                     <div class="absolute top-0 w-7/12 transform -translate-x-1/2 border-2 border-t-0 border-gray-300 left-1/2 h-1/2"></div>
+                                    <div class="absolute w-1 h-1 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 rounded-full left-1/2 top-3/4"></div>
                                 </div>
                                 <div class="absolute w-1/5 transform -translate-x-1/2 border-2 border-gray-300 rounded-full -translate-y-1/4 h-1/6 left-1/2" style="top: calc(100% - 16.6667% - 2.5rem);"></div>
                                 <div class="absolute w-7/12 transform -translate-x-1/2 border-2 border-gray-300 backdrop-filter backdrop-blur-lg h-1/6 left-1/2" style="top: calc(100% - 16.6667% - 2.5rem);">
                                     <div class="absolute bottom-0 w-7/12 transform -translate-x-1/2 border-2 border-b-0 border-gray-300 left-1/2 h-1/2"></div>
+                                    <div class="absolute w-1 h-1 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 rounded-full left-1/2 top-1/4"></div>
                                 </div>
                                 <div class="overflow-hidden">
                                     <div class="flex items-center h-10 px-2 py-1 border-2 border-b-0 border-gray-300 bg-cyanEU">
@@ -99,7 +101,7 @@
                                             <span class="text-xs h-1/2">Coach: Park Hang Seo</span>
                                         </div>
                                     </div>
-                                    <ul class="relative w-full overflow-hidden border-2 border-b border-gray-300" style="height: calc(50% - 2.5rem);">
+                                    <ul class="relative w-full border-2 border-t border-b border-gray-300" style="height: calc(50% - 2.5rem);">
                                         <li class="absolute flex flex-col items-center justify-center h-6 transform -translate-x-1/2" style="left: 50.2%; top: 7.3%;">
                                             <div class="relative flex">
                                                 <img class="w-6 h-6 rounded-full shadow" src="https://img.uefa.com/imgml/TP/players/3/2020/324x324/93321.jpg" alt="">
@@ -178,7 +180,7 @@
                                             <div class="text-xs">L. Modríc</div>
                                         </li>
                                     </ul>
-                                    <ul class="relative w-full overflow-hidden transform rotate-180 border-2 border-t border-gray-300" style="height: calc(50% - 2.5rem);">
+                                    <ul class="relative w-full transform rotate-180 border-2 border-t border-b border-gray-300" style="height: calc(50% - 2.5rem);">
                                         <li class="absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2" style="left: 50.2%; top: 7.3%;">
                                             <div class="relative flex">
                                                 <img class="w-6 h-6 rounded-full shadow" src="https://img.uefa.com/imgml/TP/players/3/2020/324x324/93321.jpg" alt="">
