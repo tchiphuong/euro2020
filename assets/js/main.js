@@ -125,9 +125,9 @@ $(document).ready(function() {
     
             $("#match" + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY")).append(
                 `
-                    <div onclick="lineup(\'` + response[i]["id"] + `\',\'` + response[i]["lineupStatus"] + `\');" x-data="{ lineup: false }" class="flex flex-col hover:opacity-80 hover:bg-gray-50 ` + response[i]["id"] + `">
+                    <div onclick="lineup(\'` + response[i]["id"] + `\',\'` + response[i]["lineupStatus"] + `\');" x-data="{ event: false }" class="flex flex-col hover:opacity-80 hover:bg-gray-50 ` + response[i]["id"] + `">
                         <div class="py-2 border-t">` + type + `
-                            <div @click="{ lineup = true }" class="flex items-center justify-center py-2">
+                            <div @click="{ event = true }" class="flex items-center justify-center py-2">
                                 <div class="w-4/12 px-2 text-right capitalize line-clamp-3">` + response[i]["homeTeam"]["internationalName"] + `</div>
                                 <div>
                                     <img class="w-6 h-6" src="` + response[i]["homeTeam"]["logoUrl"] + `" alt="` + response[i]["homeTeam"]["internationalName"] + `">
@@ -347,6 +347,7 @@ var lineUpArr = [];
 // lineup
 function lineup(matchId, lineupStatus)
 {
+    getTimeLine(matchId);
     loadLineUp = false;
     element = {};
     element.matchId = matchId;
@@ -401,12 +402,21 @@ function lineup(matchId, lineupStatus)
                     $(".lineup" + matchId).empty();
                     setTimeout(() => { 
                     $(".lineup" + matchId).append(
-                        `
-                            <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="lineup" @click.away="lineup = false" class="inset-x-0 flex flex-col px-2 mb-2 top-20 rounded-xl">
-                                
-                                <div class="flex flex-col text-sm border-b event` + matchId + `">
-                                </div>
-                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="lineup">Lineup</div>
+                    `
+                <div x-show.transition.origin.left.top.in.duration.200ms.out.duration.50ms="event" @click.away="event = false">
+                <div class="flex flex-col text-sm event` + matchId + `">
+                </div>
+                    <div x-data="{ tab: 'lineup' }">
+                        <ul class="flex justify-around my-2 border-t border-b shadow">
+                            <li :class="{ 'active': tab === 'lineup' }" @click="tab = 'lineup'" class="w-full py-2 font-bold text-center hover:bg-gray-50">Lineup</li>
+                            <li :class="{ 'active': tab === 'timeline' }" @click="tab = 'timeline'" class="w-full py-2 font-bold text-center hover:bg-gray-50">Timeline</li>
+                        </ul>
+                        <div x-show.transition.origin.right="tab === 'timeline'">
+                            <ul class="flex flex-col px-3 pt-1 overflow-y-scroll max-h-64 scrollbar-hide timeline` + matchId + `">
+                            </ul>
+                        </div>
+                        <div x-show.transition.origin.right="tab === 'lineup'">
+                            <div class="inset-x-0 flex flex-col px-2 top-20 rounded-xl">
                                 <div class="justify-between mb-2 text-white bg-white aspect-w-2 aspect-h-3" style="background: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
                                     <div class="absolute w-4/12 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-300 rounded-full left-1/2 top-1/2" style="height: calc(100% / 12 * 4 * 2 / 3 )"></div>
                                     <div class="absolute w-2 h-2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 rounded-full left-1/2 top-1/2"></div>
@@ -442,23 +452,18 @@ function lineup(matchId, lineupStatus)
                                         </div>
                                     </div>
                                 </div>
-                                </div>
-                                <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
-                                <div class="flex justify-between overflow-hidden bg-white rounded-lg opacity-100 hover:shadow">
-                                    <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                                    </ul>
-                                    <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                                    </ul>
+                            </div>
+                            <div class="pt-3 pb-2 font-bold text-center capitalize" id="substitute">substitute</div>
+                            <div class="flex justify-between overflow-hidden bg-white rounded-lg opacity-100 hover:shadow">
+                                <ul id="subHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
+                                </ul>
+                                <ul id="subAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
+                                </ul>
                                 </div>
                             </div>
+                        </div>
+                    </div>
                         `
-                        
-                    //     <div class="flex justify-between overflow-hidden bg-white rounded-lg opacity-100 hover:shadow">
-                    //     <ul id="lineUpHomeTeam` + matchId + `" class="flex flex-col items-start w-full">
-                    //     </ul>
-                    //     <ul id="lineUpAwayTeam` + matchId + `" class="flex flex-col items-end w-full bg-white">
-                    //     </ul>
-                    // </div>
                     );
 
                     for (let i = 0; i < Object.keys(response["homeTeam"]["field"]).length; i -= -1)
@@ -559,8 +564,8 @@ function lineup(matchId, lineupStatus)
 
 function getScore(matchId)
 {
+    getTimeLine(matchId);
     var empty = false;
-    var eventType;
     var eventPlayer;
     var eventTime;
     var eventTeam;
@@ -698,40 +703,220 @@ function getScore(matchId)
     });
 }
 
-// var oldScore = [
-//     {
-//         "awayTeam": {"internationalName": "awayN"},
-//         "id": 1,
-//         "homeTeam": {"internationalName": "homeN"},
-//         "score":
-//         {
-//             "regular":{"away": 432, "home": 09808}
-//         }
-//     }
-// ];
 
-// function insertScore(id, awayS, homeS, awayN, homeN)
-// {
-//     element = {};
-//     element.awayTeam = {"internationalName": awayN};
-//     element.id = id;
-//     element.homeTeam = {"internationalName": homeN};
-//     element.score = {"regular":{"away": awayS, "home": homeS}
-//     };
-    
-//     for(let i = 0; i < Object.keys(oldScore).length; i++)
-//     {
-//         // element = {};
-//         if(oldScore[i]["id"] != id)
-//         {
-//             oldScore.push(element);
-//             // notifyMe('Hà Lan 3-2 Ukraine', 'GOALLLLLLLL!!!!');
-//         }
-//     }
-//         console.log(oldScore);
-// }
-    
+function getTimeLine(matchId)
+{
+    var timeLine;
+    var score;
+    var time;
+    var subType;
+    $.ajax({
+        url: 'https://match.uefa.com/v2/matches/' + matchId + '/events?filter=LINEUP&offset=0&limit=100',
+        dataType: 'json',
+        type: 'GET',
+    }).done(function(response) {
+        $(".timeline" + matchId).empty();
 
+        if(Object.keys(response).length == 0)
+        {
+            $(".timeline" + matchId).html(`<div class="text-center pb-3">Timeline not available</div>`);
+            
+        }
+        else
+        {
+            for(let i = 0; i < Object.keys(response).length; i++)
+            {
+            
+                if(response[i]["time"]["injuryMinute"])
+                {
+                    time = response[i]["time"]["minute"] + " +" + response[i]["time"]["injuryMinute"];
+                }
+                else
+                {
+                    time = response[i]["time"]["minute"];
+                }
+                if(response[i]["type"] == "SUBSTITUTION")
+                {
+                    timeLine = 
+                    `
+                    <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
+                        <div class="flex py-2">
+                            <div class="py-1"><img class="w-5 h-5" src="assets/images/sub.svg" alt=""></div>
+                            <div class="flex-grow px-2 py-1 font-bold uppercase">Substitution</div>
+                            <div class="py-1">` + time + `'</div>
+                        </div>
+                        <div class="py-1 my-1 border-t">
+                            <div class="text-green-600 uppercase font-bold">IN</div>
+                            <div class="flex items-center">
+                                <div class="flex flex-col flex-grow">
+                                <div class="capitalize">` + response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                    <div class="flex items-center text-gray-500">
+                                    <img class="h-4 mr-1" src="` + response[i]["secondaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                        <div class="mr-1">` + response[i]["secondaryActor"]["team"]["internationalName"] + `</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["secondaryActor"]["person"]["imageUrl"] + `" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="py-1 my-1 border-t">
+                            <div class="text-red-600 uppercase font-bold">OUT</div>
+                            <div class="flex items-center">
+                                <div class="flex flex-col flex-grow">
+                                    <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                    <div class="flex items-center text-gray-500">
+                                        <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                        <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["primaryActor"]["person"]["imageUrl"] + `" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    `
+                    $(".timeline" + matchId).append(timeLine);
+                }
+                else if(response[i]["type"] == "YELLOW_CARD")
+                {
+                    timeLine = 
+                    `
+                        <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
+                            <div class="flex py-2">
+                                <div class="py-1"><img class="w-5 h-5" src="assets/images/yellow-card.svg" alt=""></div>
+                                <div class="flex-grow px-2 py-1 font-bold uppercase">yellow card</div>
+                                <div class="py-1">` + time + `'</div>
+                            </div>
+                            <div class="py-1 my-1 border-t">
+                                <div class="flex items-center">
+                                    <div class="flex flex-col flex-grow">
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="flex items-center text-gray-500">
+                                            <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                            <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["primaryActor"]["person"]["imageUrl"] + `" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `
+                    $(".timeline" + matchId).append(timeLine);
+                }
+                else if(response[i]["type"] == "RED_CARD")
+                {
+                    timeLine = 
+                    `
+                        <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
+                            <div class="flex py-2">
+                                <div class="py-1"><img class="w-5 h-5" src="assets/images/red-card.svg" alt=""></div>
+                                <div class="flex-grow px-2 py-1 font-bold uppercase">red card</div>
+                                <div class="py-1">` + time + `'</div>
+                            </div>
+                            <div class="py-1 my-1 border-t">
+                                <div class="flex items-center">
+                                    <div class="flex flex-col flex-grow">
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="flex items-center text-gray-500">
+                                            <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                            <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["primaryActor"]["person"]["imageUrl"] + `" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `
+                    $(".timeline" + matchId).append(timeLine);
+                }
+                else if(response[i]["type"] == "RED_YELLOW_CARD")
+                {
+                    timeLine = 
+                    `
+                        <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
+                            <div class="flex py-2">
+                                <div class="py-1"><img class="w-5 h-5" src="assets/images/red-card.svg" alt=""></div>
+                                <div class="flex-grow px-2 py-1 font-bold uppercase">red card</div>
+                                <div class="py-1">` + time + `'</div>
+                            </div>
+                            <div class="py-1 my-1 border-t">
+                                <div class="flex items-center">
+                                    <div class="flex flex-col flex-grow">
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="flex items-center text-gray-500">
+                                            <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                            <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["primaryActor"]["person"]["imageUrl"] + `" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `
+                    $(".timeline" + matchId).append(timeLine);
+                }
+                else if(response[i]["type"] == "GOAL")
+                {
+                    if(response[i]["subType"])
+                    {
+                        if(response[i]["subType"] == "OWN_GOAL")
+                        {
+                            subType = " (OG)";
+                        }
+                        else if (response[i]["subType"] == "PENALTY_GOAL")
+                        {
+                            subType = " (P)";
+                        }
+                    }
+                    else
+                    {
+                        subType = "";
+                    }
+                    score = response[i]["totalScore"]["home"] + " - " + response[i]["totalScore"]["away"];
+                    timeLine = 
+                    `
+                        <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
+                            <div class="flex flex-col items-center rounded-t-lg py-2 -mx-4 text-xl text-white bg-center bg-cover shadow" style="background-image: url('https://img.uefa.com/imgml/uefacom/euro2020/body-bg.jpg');">
+                                <div class="py-1"><img class="w-8 h-8" src="assets/images/goal.svg" alt=""></div>
+                                <div class="flex-grow px-2 py-1 uppercase" id="title">G O O O A A A L L L ! ! !</div>
+                                <div class="py-1">` + time + `'` + subType + `</div>
+                            </div>
+                            <div class="flex items-center justify-center py-3 border-t">
+                                <div class="w-2/12 font-bold text-center">` + score + `</div>
+                            </div>
+                            <div class="py-1 my-1 border-t">
+                                <div class="flex items-center">
+                                    <div class="flex flex-col flex-grow">
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="flex items-center text-gray-500">
+                                            <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
+                                            <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img class="w-10 h-10 rounded-full shadow" src="` + response[i]["primaryActor"]["person"]["imageUrl"] + `" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `
+                    $(".timeline" + matchId).append(timeLine);
+                }
+            }
+        }
+    });
+}
+
+    
+// event https://match.uefa.com/v2/matches/2024456/events?filter=LINEUP&offset=0&limit=100&order=ASC
 // team https://comp.uefa.com/v1/teams/135,57166
 // league https://comp.uefa.com/v1/competitions/3
 // line up https://match.uefa.com/v3/matches/2029498/lineups
