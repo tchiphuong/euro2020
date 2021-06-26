@@ -3,7 +3,7 @@ $(document).ready(function() {
         var times = moment().format("dddd, DD/MM/YYYY, hh:mm:ss");
         $("#timenow").html(times)
         $.ajax({
-            // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=1&competitionId=1&fromDate=2021-05-29&toDate=2021-05-29",
+            // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=20&competitionId=3&fromDate=2016-06-11&toDate=2021-05-29",
             url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
             dataType: "json",
             type: "GET",
@@ -16,7 +16,7 @@ $(document).ready(function() {
                         if(response[i]["minute"]["injury"])
                         {
                             $(".m" + response[i]["id"]).html(
-                                response[i]["minute"]["normal"]+"' +" +response[i]["minute"]["injury"] 
+                                response[i]["minute"]["normal"]+"+" +response[i]["minute"]["injury"] + "'"
                             );
                         }
                         else
@@ -26,14 +26,21 @@ $(document).ready(function() {
                             );
                         }
                     }
-                    // else{
-                    //     $(".m" + response[i]["id"]).html(
-                    //         `<span class="text-xs">Haft-time break</span>`
-                    //     );
-                    // }
+                    else{
+                        $(".m" + response[i]["id"]).html(
+                            `<span class="text-xs">Haft-time break</span>`
+                        );
+                    }
                     if (response[i]["score"]) {
+                        if(response[i]["score"]["penalty"])
+                        {
+                            $(".s" + response[i]["id"]).html(score =  response[i]["score"]["total"]["home"] + ` - `+ response[i]["score"]["total"]["away"] + `<div class="text-xs flex flex-col font-normal"><div>Penalty</div><div class="text-xs px-1 font-normal">` + response[i]["score"]["penalty"]["home"] + ` - ` + response[i]["score"]["penalty"]["away"] + `</div></div>`);
+                        }
+                        else
+                        {
+                            $(".s" + response[i]["id"]).html(score =  response[i]["score"]["total"]["home"] + ` - `+ response[i]["score"]["total"]["away"]);
+                        }
                         // insertScore(response[i]["id"], response[i]["score"]["regular"]["away"], response[i]["score"]["regular"]["home"], response[i]["awayTeam"]["internationalName"], response[i]["homeTeam"]["internationalName"]);
-                        $(".s" + response[i]["id"]).html(response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"]);
                     } else {
                         score = `<span>` +  + `</span>`;
                         $(".s" + response[i]["id"]).html(
@@ -44,9 +51,7 @@ $(document).ready(function() {
                 }
                 else
                 {
-                    $(".m" + response[i]["id"]).html(
-                        response[i]["minute"]["normal"]+"'"
-                    );
+                    $(".m" + response[i]["id"]).empty();
                 }
             }
         })
@@ -55,7 +60,7 @@ $(document).ready(function() {
 
     //match
     $.ajax({
-        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=10&limit=1&competitionId=1&fromDate=2021-05-29&toDate=2021-05-29",
+        // url: "https://match.uefa.com/v2/matches?&order=ASC&offset=0&limit=100&competitionId=3&fromDate=2012-06-08&toDate=2012-07-01",
         url: "https://match.uefa.com/v2/matches?fromDate=2021-06-11&toDate=2021-07-11&order=ASC&offset=0&limit=100&competitionId=3",
         dataType: "json",
         type: "GET",
@@ -123,8 +128,16 @@ $(document).ready(function() {
                 type = `<div class="font-bold text-center">` + response[i]["round"]["metaData"]["name"] + `</div>`;
             }
             if (response[i]["score"]) {
-                score =  response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"];
-                // insertScore(response[i]["id"], response[i]["score"]["regular"]["away"], response[i]["score"]["regular"]["home"], response[i]["awayTeam"]["internationalName"], response[i]["homeTeam"]["internationalName"]);
+                if(response[i]["score"]["penalty"])
+                {
+                    // score =  response[i]["score"]["total"]["home"] + `<sub class="px-1">(` + response[i]["score"]["penalty"]["home"] + `)</sub> - <sub class="px-1">(` + response[i]["score"]["penalty"]["away"] + `)</sub>` + response[i]["score"]["total"]["away"];
+                    score =  response[i]["score"]["total"]["home"] + ` - `+ response[i]["score"]["total"]["away"] + `<div class="text-xs flex flex-col font-normal"><div>Penalty</div><div class="text-xs px-1 font-normal">` + response[i]["score"]["penalty"]["home"] + ` - ` + response[i]["score"]["penalty"]["away"] + `</div></div>`;
+
+                }
+                else
+                {
+                    score =  response[i]["score"]["total"]["home"] + ` - `+ response[i]["score"]["total"]["away"];
+                }
             } else {
                 score = `<span class="text-base font-normal">` + moment(response[i]["kickOffTime"]["dateTime"]).format("LT") + `</span>`;
             }
@@ -595,6 +608,14 @@ function getScore(matchId)
             {
                 for (let i = 0; i < Object.keys(response["playerEvents"]["scorers"]).length; i -= -1)
                 {
+                    if(response["playerEvents"]["scorers"][i]["time"]["minute"]["injury"])
+                        {
+                            eventTime = response["playerEvents"]["scorers"][i]["time"]["minute"] + "+" + response["playerEvents"]["scorers"][i]["time"]["injuryMinute"] + "'";
+                        }
+                        else
+                        {
+                            eventTime = response["playerEvents"]["scorers"][i]["time"]["minute"] + "'";
+                        }
                     eventPlayer = response["playerEvents"]["scorers"][i]["player"]["translations"]["name"]["EN"];
                     eventTime = response["playerEvents"]["scorers"][i]["time"]["minute"] + "'";
                     
@@ -682,7 +703,7 @@ function getScore(matchId)
                     eventPlayer = response["playerEvents"]["redCards"][i]["player"]["translations"]["name"]["EN"];
                     eventTime = response["playerEvents"]["redCards"][i]["time"]["minute"] + "'";
                     
-                    if(response["playerEvents"]["redCards"]["teamId"] == awayTeamId)
+                    if(response["playerEvents"]["redCards"][i]["teamId"] == awayTeamId)
                     {
                         eventTeam = `
                                 <div class="flex items-center justify-end px-2 py-1 border-t">
@@ -847,7 +868,7 @@ function getTimeLine(matchId)
                     `
                         <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
                             <div class="flex py-2">
-                                <div class="py-1"><img class="w-5 h-5" src="assets/images/red-card.svg" alt=""></div>
+                                <div class="py-1"><img class="w-5 h-5" src="assets/images/yellow-to-red-card.svg" alt=""></div>
                                 <div class="flex-grow px-2 py-1 font-bold uppercase">red card</div>
                                 <div class="py-1">` + time + `'</div>
                             </div>
@@ -886,7 +907,14 @@ function getTimeLine(matchId)
                     {
                         subType = "";
                     }
-                    score = response[i]["totalScore"]["home"] + " - " + response[i]["totalScore"]["away"];
+                    if(response[i]["totalScore"])
+                    {
+                        score = response[i]["totalScore"]["home"] + " - " + response[i]["totalScore"]["away"];
+                    }
+                    else
+                    {
+                        score = "aa";
+                    }
                     timeLine = 
                     `
                         <li class="flex flex-col px-4 mb-3 rounded-lg shadow">
