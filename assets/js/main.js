@@ -26,11 +26,11 @@ $(document).ready(function() {
                             );
                         }
                     }
-                    else{
-                        $(".m" + response[i]["id"]).html(
-                            `<span class="text-xs">Haft-time break</span>`
-                        );
-                    }
+                    // else{
+                    //     $(".m" + response[i]["id"]).html(
+                    //         `<span class="text-xs">Haft-time break</span>`
+                    //     );
+                    // }
                     if (response[i]["score"]) {
                         // insertScore(response[i]["id"], response[i]["score"]["regular"]["away"], response[i]["score"]["regular"]["home"], response[i]["awayTeam"]["internationalName"], response[i]["homeTeam"]["internationalName"]);
                         $(".s" + response[i]["id"]).html(response[i]["score"]["regular"]["home"] + ` - `+ response[i]["score"]["regular"]["away"]);
@@ -41,6 +41,12 @@ $(document).ready(function() {
                         );
                     }
                     getScore(response[i]["id"]);
+                }
+                else
+                {
+                    $(".m" + response[i]["id"]).html(
+                        response[i]["minute"]["normal"]+"'"
+                    );
                 }
             }
         })
@@ -69,7 +75,7 @@ $(document).ready(function() {
                 {
                     date = 
                     `
-                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                        <div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
                                 <div class="p-3 font-bold capitalize">Today</div>
                                 </div>
@@ -81,7 +87,7 @@ $(document).ready(function() {
                 {
                     date = 
                     `
-                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                        <div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
                                 <div class="p-3 font-bold capitalize">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
@@ -94,7 +100,7 @@ $(document).ready(function() {
             {
                 date = 
                     `
-                        <div class="flex flex-col w-full p-2 md:w-6/12 xl:w-4/12 2xl:w-3/12" data-aos="fade-up" data-aos-duration="2000">
+                        <div class="flex flex-col w-full p-2 md:w-6/12 lg:w-4/12" data-aos="fade-up" data-aos-duration="2000">
                             <div class="w-full overflow-hidden bg-white shadow-md cursor-pointer rounded-xl" id="match` + moment(response[i]["kickOffTime"]["dateTime"]).format("DDMMYYYY") + `">
                                 <div class="p-3 font-bold capitalize">` + moment(response[i]["kickOffTime"]["dateTime"]).format("DD/MM/YYYY") + `</div>
                                 </div>
@@ -482,7 +488,7 @@ function lineup(matchId, lineupStatus)
                             `
                                 <li id="player" data-title='` + response["homeTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="bottom" class="absolute flex flex-col items-center justify-center h-6 transform -translate-x-1/2 filter drop-shadow" style="left: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["homeTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
                                     <div class="relative flex">
-                                        <img class="w-8 h-8 rounded-full shadow" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                        <img class="w-8 h-8 xl:h-10 xl:w-10 rounded-full shadow" src="` + response["homeTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["homeTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                         ` + captain(response["homeTeam"]["field"][i]["type"]) + `
                                         <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["homeTeam"]["field"][i]["jerseyNumber"] + `</span>
                                     </div>
@@ -524,7 +530,7 @@ function lineup(matchId, lineupStatus)
                             `
                                 <li id="player" data-title='` + response["awayTeam"]["field"][i]["player"]["translations"]["name"]["EN"] + `' data-placement="bottom" class="absolute flex flex-col items-center justify-center h-6 transform rotate-180 -translate-x-1/2 filter drop-shadow text-shadow" style="left: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["x"] + `% / 10); top: calc(` + response["awayTeam"]["field"][i]["fieldCoordinate"]["y"] + `% / 10);">
                                     <div class="relative flex">
-                                        <img class="w-8 h-8 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
+                                        <img class="w-8 h-8 xl:h-10 xl:w-10 rounded-full shadow" src="` + response["awayTeam"]["field"][i]["player"]["imageUrl"] + `" alt="` + response["awayTeam"]["field"][i]["player"]["translations"]["shortName"]["EN"] + `">
                                         ` + captain(response["awayTeam"]["field"][i]["type"]) + `
                                         <span class="absolute top-0 right-0 transform -translate-y-0.5 translate-x-0.5 flex items-center justify-center w-3 h-3 text-xs text-white rounded-full bg-cyanEU">` + response["awayTeam"]["field"][i]["jerseyNumber"] + `</span>
                                     </div>
