@@ -26,11 +26,6 @@ $(document).ready(function() {
                             );
                         }
                     }
-                    else{
-                        $(".m" + response[i]["id"]).html(
-                            `<span class="text-xs">Haft-time break</span>`
-                        );
-                    }
                     if (response[i]["score"]) {
                         if(response[i]["score"]["penalty"])
                         {
@@ -48,6 +43,25 @@ $(document).ready(function() {
                         );
                     }
                     getScore(response[i]["id"]);
+                    
+                    if(response[i]["phase"] == "HAFT_TIME_BREAK")
+                    {
+                        $(".m" + response[i]["id"]).html(
+                            `<span class="text-xs">Haft-time break</span>`
+                        );
+                    }
+                    else if(response[i]["phase"] == "END_SECOND_HALF")
+                    {
+                        $(".m" + response[i]["id"]).html(
+                            `<span class="text-xs">End of 2nd half</span>`
+                        );
+                    }
+                    else if(response[i]["phase"] == "EXTRA_TIME_BREAK")
+                    {
+                        $(".m" + response[i]["id"]).html(
+                            `<span class="text-xs">ET half-time</span>`
+                        );
+                    }
                 }
                 else
                 {
@@ -737,6 +751,8 @@ function getTimeLine(matchId)
     var score;
     var time;
     var subType;
+    var secondaryActor;
+    var primaryActor;
     $.ajax({
         url: 'https://match.uefa.com/v2/matches/' + matchId + '/events?filter=LINEUP&offset=0&limit=100',
         dataType: 'json',
@@ -762,6 +778,14 @@ function getTimeLine(matchId)
                 {
                     time = response[i]["time"]["minute"];
                 }
+                if(response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"])
+                {
+                    secondaryActor = response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"];
+                }
+                if(response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"])
+                {
+                    primaryActor = response[i]["primaryActor"]["person"]["translations"]["name"]["EN"];
+                }
                 if(response[i]["type"] == "SUBSTITUTION")
                 {
                     timeLine = 
@@ -776,7 +800,7 @@ function getTimeLine(matchId)
                             <div class="text-green-600 uppercase font-bold">IN</div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
-                                <div class="capitalize">` + response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                <div class="capitalize">` + secondaryActor + `</div>
                                     <div class="flex items-center text-gray-500">
                                     <img class="h-4 mr-1" src="` + response[i]["secondaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                         <div class="mr-1">` + response[i]["secondaryActor"]["team"]["internationalName"] + `</div>
@@ -791,7 +815,7 @@ function getTimeLine(matchId)
                             <div class="text-red-600 uppercase font-bold">OUT</div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
-                                    <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                    <div class="capitalize">` + primaryActor + `</div>
                                     <div class="flex items-center text-gray-500">
                                         <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                         <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>
@@ -819,7 +843,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="capitalize">` + primaryActor + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -847,7 +871,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="capitalize">` + primaryActor + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -875,7 +899,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="capitalize">` + primaryActor + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -913,7 +937,7 @@ function getTimeLine(matchId)
                     }
                     else
                     {
-                        score = "aa";
+                        score = "";
                     }
                     timeLine = 
                     `
@@ -929,7 +953,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
+                                        <div class="capitalize">` + primaryActor + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
