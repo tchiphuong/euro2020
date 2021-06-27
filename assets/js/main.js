@@ -789,7 +789,7 @@ function getTimeLine(matchId)
                             <div class="py-1">` + time + `'</div>
                         </div>
                         <div class="py-1 my-1 border-t">
-                            <div class="text-green-600 uppercase font-bold">IN</div>
+                            <div class="text-green-600 uppercase font-bold"><img class="w-5 h-5" src="assets/images/sub-in.svg" alt="IN"></div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
                                 <div class="capitalize">` + response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
@@ -804,7 +804,7 @@ function getTimeLine(matchId)
                             </div>
                         </div>
                         <div class="py-1 my-1 border-t">
-                            <div class="text-red-600 uppercase font-bold">OUT</div>
+                            <div class="text-red-600 uppercase font-bold"><img class="w-5 h-5" src="assets/images/sub-out.svg" alt="OUT"></div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
                                     <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
