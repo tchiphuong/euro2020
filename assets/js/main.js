@@ -778,14 +778,6 @@ function getTimeLine(matchId)
                 {
                     time = response[i]["time"]["minute"];
                 }
-                if(response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"])
-                {
-                    secondaryActor = response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"];
-                }
-                if(response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"])
-                {
-                    primaryActor = response[i]["primaryActor"]["person"]["translations"]["name"]["EN"];
-                }
                 if(response[i]["type"] == "SUBSTITUTION")
                 {
                     timeLine = 
@@ -800,7 +792,7 @@ function getTimeLine(matchId)
                             <div class="text-green-600 uppercase font-bold">IN</div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
-                                <div class="capitalize">` + secondaryActor + `</div>
+                                <div class="capitalize">` + response[i]["secondaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                     <div class="flex items-center text-gray-500">
                                     <img class="h-4 mr-1" src="` + response[i]["secondaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                         <div class="mr-1">` + response[i]["secondaryActor"]["team"]["internationalName"] + `</div>
@@ -815,7 +807,7 @@ function getTimeLine(matchId)
                             <div class="text-red-600 uppercase font-bold">OUT</div>
                             <div class="flex items-center">
                                 <div class="flex flex-col flex-grow">
-                                    <div class="capitalize">` + primaryActor + `</div>
+                                    <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                     <div class="flex items-center text-gray-500">
                                         <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                         <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>
@@ -843,7 +835,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + primaryActor + `</div>
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -871,7 +863,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + primaryActor + `</div>
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -899,7 +891,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + primaryActor + `</div>
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
@@ -953,7 +945,7 @@ function getTimeLine(matchId)
                             <div class="py-1 my-1 border-t">
                                 <div class="flex items-center">
                                     <div class="flex flex-col flex-grow">
-                                        <div class="capitalize">` + primaryActor + `</div>
+                                        <div class="capitalize">` + response[i]["primaryActor"]["person"]["translations"]["name"]["EN"] + `</div>
                                         <div class="flex items-center text-gray-500">
                                             <img class="h-4 mr-1" src="` + response[i]["primaryActor"]["team"]["bigLogoUrl"] + `" alt="">
                                             <div class="mr-1">` + response[i]["primaryActor"]["team"]["internationalName"] + `</div>    
